@@ -75,5 +75,26 @@ public class Wallet {
     public void setGame(Game game) {
         this.game = game;
     }
-    
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + walletId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Wallet other = (Wallet) obj;
+        if (walletId != other.walletId)
+            return false;
+        return true;
+    }
 }
