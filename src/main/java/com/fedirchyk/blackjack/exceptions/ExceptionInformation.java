@@ -10,5 +10,4 @@ public class ExceptionInformation {
         this.url = url;
         this.exception = exception.getLocalizedMessage();
     }
-
 }

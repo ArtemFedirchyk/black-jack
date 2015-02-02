@@ -1,31 +1,12 @@
 package com.fedirchyk.blackjack.service;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.fedirchyk.blackjack.dao.WalletDao;
 import com.fedirchyk.blackjack.entity.Wallet;
 
-@Component
-public class GameService {
+public interface GameService {
 
-    private static Logger logger = Logger.getLogger(GameService.class);
+    void saveWallet(Wallet entity);
 
-    @Autowired
-    private WalletDao walletDao;
+    Wallet getWallet(Integer id);
 
-    public void saveWallet(Wallet entity) {
-        walletDao.save(entity);
-    }
-
-    public Wallet getWallet(Integer id) {
-        logger.info("getWallet()");
-        return walletDao.findOne(id);
-    }
-
-    public boolean isWalletExist(Integer id) {
-        logger.info("Checking is wallet with - [" + id + "] exist in DB");
-        return walletDao.exists(id);
-    }
+    boolean isWalletExist(Integer id);
 }
