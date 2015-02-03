@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fedirchyk.blackjack.exceptions.ExceptionInformation;
+import com.fedirchyk.blackjack.vo.GameTable;
 
 @RestController
 @RequestMapping(value = "/game", produces = "application/json")
@@ -18,24 +19,33 @@ public class GameController {
     private static Logger logger = Logger.getLogger(GameController.class);
 
     @RequestMapping(value = "/start/{bet}", method = RequestMethod.GET)
-    public void startGame(@PathVariable double bet) {
+    public GameTable startGame(@PathVariable double bet) {
         logger.info("Started game with bet - " + bet);
+        return null;
     }
 
     @RequestMapping(value = "/bet/{count}", method = RequestMethod.GET)
-    public void makeBet(@PathVariable double count) {
+    public GameTable makeBet(@PathVariable double count) {
+        logger.info("Started process of making Bet with count of money - " + count);
+        return null;
     }
 
     @RequestMapping(value = "/deal", method = RequestMethod.GET)
-    public void makeDeal() {
+    public GameTable makeDeal() {
+        logger.info("");
+        return null;
     }
 
     @RequestMapping(value = "/hit", method = RequestMethod.POST)
-    public void hit() {
+    public GameTable hit() {
+        logger.info("Started process when Player makes HIT action");
+        return null;
     }
 
     @RequestMapping(value = "/stand", method = RequestMethod.GET)
-    public void stand() {
+    public GameTable stand() {
+        logger.info("Started process when Player makes STAND action");
+        return null;
     }
 
     @ExceptionHandler(value = RuntimeException.class)

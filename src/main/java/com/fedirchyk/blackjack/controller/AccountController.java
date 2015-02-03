@@ -10,7 +10,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fedirchyk.blackjack.exceptions.ExceptionInformation;
+import com.fedirchyk.blackjack.exceptions.WalletNotFoundException;
+import com.fedirchyk.blackjack.exceptions.constatnts.ExceptionConstants;
+import com.fedirchyk.blackjack.vo.GameTable;
 
+/**
+ * This controller is responsible for processing all requests which are associated with Player and Player's wallet
+ * 
+ * @author artem.fedirchyk
+ */
 @RestController
 @RequestMapping(value = "/wallet", produces = "application/json")
 public class AccountController {
@@ -19,14 +27,48 @@ public class AccountController {
 
     private static final double DEFAULT_WALLET_BALANCE = 100;
 
-    @RequestMapping(value = "/initPlayer/{initBalane}", method = RequestMethod.GET)
-    public void initializePlayer(@PathVariable double initBalance) {
-        logger.info("Started the process of player's initialisation");
+    private boolean isPresent;
+
+    /**
+     * Initializes Player with default balance of Player's wallet
+     * 
+     * @return Object of {@link GameTable} type, which contains all information about Player and Game state
+     */
+    @RequestMapping(value = "/initPlayer", method = RequestMethod.GET)
+    public GameTable initializePlayerWithDefaultBalance() {
+        logger.info("Started the process of player's initialisation with default balance");
+        return null;
     }
 
+    /**
+     * Initializes Player with balance of Player's wallet from request
+     * 
+     * @param initBalance
+     *            - value of initial balance of Player's wallet
+     * @return Object of {@link GameTable} type, which contains all information about Player and Game state
+     */
+    @RequestMapping(value = "/initPlayerBalance/{initBalane}", method = RequestMethod.GET)
+    public GameTable initializePlayerWithInputedBalance(@PathVariable double initBalance) {
+        logger.info("Started the process of player's initialisation with inputed balance");
+        return null;
+    }
+
+    /**
+     * Adds some count of money for Player's wallet
+     * 
+     * @param walletId
+     *            - value of Player's wallet, which should be registered in DB
+     * @param money
+     *            - value of incoming money for increasing Player's balance from request
+     * @return Object of {@link GameTable} type, which contains all information about Player and Game state
+     */
     @RequestMapping(value = "/addMoney/{walletId}/{money}", method = RequestMethod.GET)
-    public void increaseBalanse(@PathVariable int walletId, @PathVariable double money) {
-        logger.info("");
+    public GameTable increaseBalanse(@PathVariable int walletId, @PathVariable double money) {
+        if (isPresent) {
+            logger.info("Started the process of increasing the player's balance");
+            return null;
+        }
+        throw new WalletNotFoundException(ExceptionConstants.WALLET_NOT_FOUND_EXCEPTION);
     }
 
     @ExceptionHandler(value = RuntimeException.class)
