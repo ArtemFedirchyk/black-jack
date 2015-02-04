@@ -15,7 +15,7 @@ public class DefaultGameService implements GameService {
 
     @Autowired
     private WalletDao walletDao;
-
+    
     @Override
     public void saveWallet(Wallet entity) {
         walletDao.save(entity);
@@ -32,5 +32,4 @@ public class DefaultGameService implements GameService {
         logger.info("Checking is wallet with - [" + id + "] exist in DB");
         return walletDao.exists(id);
     }
-
 }

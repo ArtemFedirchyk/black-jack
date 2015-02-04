@@ -3,6 +3,7 @@ package com.fedirchyk.blackjack.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fedirchyk.blackjack.exceptions.ExceptionInformation;
 import com.fedirchyk.blackjack.exceptions.WalletNotFoundException;
 import com.fedirchyk.blackjack.exceptions.constatnts.ExceptionConstants;
+import com.fedirchyk.blackjack.service.AccountService;
 import com.fedirchyk.blackjack.vo.GameTable;
 
 /**
@@ -20,12 +22,15 @@ import com.fedirchyk.blackjack.vo.GameTable;
  * @author artem.fedirchyk
  */
 @RestController
-@RequestMapping(value = "/wallet", produces = "application/json")
+@RequestMapping(value = "/", produces = "application/json")
 public class AccountController {
 
     private static Logger logger = Logger.getLogger(AccountController.class);
 
     private static final double DEFAULT_WALLET_BALANCE = 100;
+
+    @Autowired
+    private AccountService accountService;
 
     private boolean isPresent;
 
@@ -37,7 +42,7 @@ public class AccountController {
     @RequestMapping(value = "/initPlayer", method = RequestMethod.GET)
     public GameTable initializePlayerWithDefaultBalance() {
         logger.info("Started the process of player's initialisation with default balance");
-        return null;
+        return accountService.initializePlayer(DEFAULT_WALLET_BALANCE);
     }
 
     /**
