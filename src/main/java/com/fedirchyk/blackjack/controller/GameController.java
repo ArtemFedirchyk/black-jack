@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fedirchyk.blackjack.exceptions.BetNotMadeException;
 import com.fedirchyk.blackjack.exceptions.ExceptionInformation;
 import com.fedirchyk.blackjack.vo.GameTable;
 
@@ -23,6 +24,8 @@ import com.fedirchyk.blackjack.vo.GameTable;
 public class GameController {
 
     private static Logger logger = Logger.getLogger(GameController.class);
+
+    private boolean isTempPlug;
 
     /**
      * Starts the Game process in next way - Player makes bet and game starts without asking about 'Deal' action
@@ -58,8 +61,11 @@ public class GameController {
      */
     @RequestMapping(value = "/deal", method = RequestMethod.GET)
     public GameTable makeDeal() {
-        logger.info("");
-        return null;
+        if (isTempPlug) {
+            logger.info("Strated process when Player make 'Deal' action");
+            return null;
+        }
+        throw new BetNotMadeException("");
     }
 
     /**
