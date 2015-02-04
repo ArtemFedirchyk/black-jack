@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "wallet")
 public class Wallet {
@@ -32,7 +34,8 @@ public class Wallet {
     @Column(name = "time", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
-    
+
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "wallet")
     private Game game;
 

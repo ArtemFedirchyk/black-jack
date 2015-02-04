@@ -37,7 +37,7 @@ public class AccountController {
     /**
      * Initializes Player with default balance of Player's wallet
      * 
-     * @return Object of {@link GameTable} type, which contains all information about Player and Game state
+     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
     @RequestMapping(value = "/initPlayer", method = RequestMethod.GET)
     public GameTable initializePlayerWithDefaultBalance() {
@@ -50,7 +50,7 @@ public class AccountController {
      * 
      * @param initBalance
      *            - value of initial balance of Player's wallet
-     * @return Object of {@link GameTable} type, which contains all information about Player and Game state
+     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
     @RequestMapping(value = "/initPlayerBalance/{initBalane}", method = RequestMethod.GET)
     public GameTable initializePlayerWithInputedBalance(@PathVariable double initBalance) {
@@ -65,7 +65,7 @@ public class AccountController {
      *            - value of Player's wallet, which should be registered in DB
      * @param money
      *            - value of incoming money for increasing Player's balance from request
-     * @return Object of {@link GameTable} type, which contains all information about Player and Game state
+     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
     @RequestMapping(value = "/addMoney/{walletId}/{money}", method = RequestMethod.GET)
     public GameTable increaseBalanse(@PathVariable int walletId, @PathVariable double money) {
