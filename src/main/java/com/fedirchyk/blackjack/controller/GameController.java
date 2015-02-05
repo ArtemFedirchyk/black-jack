@@ -3,6 +3,7 @@ package com.fedirchyk.blackjack.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fedirchyk.blackjack.exceptions.BetNotMadeException;
 import com.fedirchyk.blackjack.exceptions.ExceptionInformation;
+import com.fedirchyk.blackjack.exceptions.GeneralGameException;
+import com.fedirchyk.blackjack.service.AccountService;
+import com.fedirchyk.blackjack.service.GameService;
 import com.fedirchyk.blackjack.vo.GameTable;
 
 /**
@@ -20,10 +24,16 @@ import com.fedirchyk.blackjack.vo.GameTable;
  * 
  */
 @RestController
-@RequestMapping(value = "/game", produces = "application/json")
+@RequestMapping(value = "/game/{walletId}", produces = "application/json")
 public class GameController {
 
     private static Logger logger = Logger.getLogger(GameController.class);
+
+    @Autowired
+    private GameService gameService;
+
+    @Autowired
+    private AccountService accountService;
 
     private boolean isTempPlug;
 
@@ -36,8 +46,11 @@ public class GameController {
      */
     @RequestMapping(value = "/start/{bet}", method = RequestMethod.GET)
     public GameTable startGame(@PathVariable double bet) {
-        logger.info("Started game with bet - " + bet);
-        return null;
+        if (isTempPlug) {
+            logger.info("Started game with bet - " + bet);
+            return null;
+        }
+        throw new GeneralGameException();
     }
 
     /**

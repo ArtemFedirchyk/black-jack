@@ -22,9 +22,7 @@ public class DefaultAccountService implements AccountService {
         wallet.setBalance(balance);
         wallet.setTime(new Date());
         
-        Wallet savedWallet = walletDao.save(wallet);
-
-        return new GameTable(savedWallet);
+        return new GameTable(walletDao.save(wallet));
     }
 
 }

@@ -13,9 +13,12 @@
 
 	<properties>
 		<java.version>1.7</java.version>
-		<guava.version>16.0.1</guava.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- Dependencies -->
+		<commons-lang.version>3.3.2</commons-lang.version>
+		<guava.version>16.0.1</guava.version>
 	</properties>
 
 	<dependencies>
@@ -67,6 +70,13 @@
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang.version}</version>
 		</dependency>
 
 	</dependencies>
