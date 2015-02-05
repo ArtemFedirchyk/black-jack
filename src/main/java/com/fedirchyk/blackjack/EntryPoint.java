@@ -7,6 +7,12 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * This Class is Entry - Point for all application, it runs Spring Boot engine and contains setup configuration
+ * 
+ * @author dell
+ * 
+ */
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan

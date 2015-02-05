@@ -10,6 +10,12 @@ import com.fedirchyk.blackjack.entity.Wallet;
 import com.fedirchyk.blackjack.service.AccountService;
 import com.fedirchyk.blackjack.vo.GameTable;
 
+/**
+ * Contains implementation of logic associated with Player
+ * 
+ * @author artem.fedirchyk
+ * 
+ */
 @Service
 public class DefaultAccountService implements AccountService {
 
@@ -21,7 +27,7 @@ public class DefaultAccountService implements AccountService {
         Wallet wallet = new Wallet();
         wallet.setBalance(balance);
         wallet.setTime(new Date());
-        
+
         return new GameTable(walletDao.save(wallet));
     }
 

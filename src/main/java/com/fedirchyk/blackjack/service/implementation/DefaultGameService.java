@@ -8,6 +8,12 @@ import com.fedirchyk.blackjack.dao.WalletDao;
 import com.fedirchyk.blackjack.entity.Wallet;
 import com.fedirchyk.blackjack.service.GameService;
 
+/**
+ * Contains implementation of all functional logic associated with Game process
+ * 
+ * @author artem.fedirchyk
+ * 
+ */
 @Service
 public class DefaultGameService implements GameService {
 
@@ -15,7 +21,7 @@ public class DefaultGameService implements GameService {
 
     @Autowired
     private WalletDao walletDao;
-    
+
     @Override
     public void saveWallet(Wallet entity) {
         walletDao.save(entity);
