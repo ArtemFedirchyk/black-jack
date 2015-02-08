@@ -2,6 +2,7 @@ package com.fedirchyk.blackjack.service.implementation;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ import com.fedirchyk.blackjack.vo.GameTable;
 @Service
 public class DefaultAccountService implements AccountService {
 
+    private static Logger logger = Logger.getLogger(DefaultAccountService.class);
+
     @Autowired
     private WalletDao walletDao;
 
@@ -29,6 +32,12 @@ public class DefaultAccountService implements AccountService {
         wallet.setTime(new Date());
 
         return new GameTable(walletDao.save(wallet));
+    }
+
+    @Override
+    public boolean isWalletExist(int walletId) {
+        logger.info("Started process of checking is Player's Wallet with ID - [" + walletId + "] exist in DB");
+        return walletDao.exists(walletId);
     }
 
 }

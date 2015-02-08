@@ -10,6 +10,21 @@ import com.fedirchyk.blackjack.vo.GameTable;
  */
 public interface AccountService {
 
+    /**
+     * Performs the process of initialization of new Player in BlackJack game
+     * 
+     * @param balance
+     *            - value of balance, which will be initial for new Player;s Wallet
+     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
+     */
     GameTable initializePlayer(double balance);
 
+    /**
+     * Checks is Player's Wallet exists in DB
+     * 
+     * @param walletId
+     *            - value of Wallet's ID for checking
+     * @return - true if Wallet exists in DB and false if it doesn't exist
+     */
+    boolean isWalletExist(int walletId);
 }
