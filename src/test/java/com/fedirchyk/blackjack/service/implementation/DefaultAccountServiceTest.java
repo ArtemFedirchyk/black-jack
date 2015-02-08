@@ -1,6 +1,7 @@
 package com.fedirchyk.blackjack.service.implementation;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,43 @@ public class DefaultAccountServiceTest {
     @Autowired
     private AccountService accountService;
 
+    private GameTable gameTable;
+
+    @Before
+    public void init() {
+        gameTable = accountService.initializePlayer(DEFAULT_BALANCE);
+    }
+
     @Test
-    public void testIsWalletExist() {
-        GameTable gameTable = accountService.initializePlayer(DEFAULT_BALANCE);
+    public void testInitializePlayerReturnedWalletNotNull() {
+        Assert.assertNotNull(gameTable.getWallet());
+    }
+
+    @Test
+    public void testIsWalletExistTrue() {
         boolean isWalletExist = accountService.isWalletExist(gameTable.getWallet().getWalletId());
         Assert.assertTrue(isWalletExist);
     }
 
+    @Test
+    public void testIsWalletsBalanceCorrect() {
+        Assert.assertEquals(DEFAULT_BALANCE, gameTable.getWallet().getBalance(), 0);
+    }
+
+    @Test
+    public void testIncreaseBalanseReturnCorrectCount() {
+        double increaseCount = 135.25;
+        GameTable gameTableWithNewBalance = accountService.increaseWalletsBalance(gameTable.getWallet().getWalletId(),
+                increaseCount);
+        double newBalance = gameTableWithNewBalance.getWallet().getBalance();
+        Assert.assertEquals(235.25, newBalance, 0);
+    }
+
+    @Test
+    public void testIsPlayerBalanceEnough() {
+        int walletId = gameTable.getWallet().getWalletId();
+        Assert.assertTrue(accountService.isPlayerBalanceEnough(walletId, 50));
+        Assert.assertTrue(accountService.isPlayerBalanceEnough(walletId, 100));
+        Assert.assertFalse(accountService.isPlayerBalanceEnough(walletId, 500));
+    }
 }

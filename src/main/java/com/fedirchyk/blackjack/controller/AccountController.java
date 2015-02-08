@@ -32,14 +32,12 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    private boolean isPresent;
-
     /**
      * Initializes Player with default balance of Player's wallet
      * 
      * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    @RequestMapping(value = "/initPlayer", method = RequestMethod.GET)
+    @RequestMapping(value = "initPlayer", method = RequestMethod.GET)
     public GameTable initializePlayerWithDefaultBalance() {
         logger.info("Started the process of player's initialisation with default balance");
         return accountService.initializePlayer(DEFAULT_WALLET_BALANCE);
@@ -52,10 +50,10 @@ public class AccountController {
      *            - value of initial balance of Player's wallet
      * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    @RequestMapping(value = "/initPlayerBalance/{initBalane}", method = RequestMethod.GET)
+    @RequestMapping(value = "initPlayerBalance/{initBalance}", method = RequestMethod.GET)
     public GameTable initializePlayerWithInputedBalance(@PathVariable double initBalance) {
         logger.info("Started the process of player's initialisation with inputed balance");
-        return null;
+        return accountService.initializePlayer(initBalance);
     }
 
     /**
@@ -63,17 +61,17 @@ public class AccountController {
      * 
      * @param walletId
      *            - value of Player's wallet, which should be registered in DB
-     * @param money
+     * @param increaseCount
      *            - value of incoming money for increasing Player's balance from request
      * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    @RequestMapping(value = "/addMoney/{walletId}/{money}", method = RequestMethod.GET)
-    public GameTable increaseBalanse(@PathVariable int walletId, @PathVariable double money) {
-        if (isPresent) {
+    @RequestMapping(value = "addMoney/{walletId}/{increaseCount}", method = RequestMethod.GET)
+    public GameTable increaseBalanse(@PathVariable int walletId, @PathVariable double increaseCount) {
+        if (accountService.isWalletExist(walletId)) {
             logger.info("Started the process of increasing the player's balance");
-            return null;
+            return accountService.increaseWalletsBalance(walletId, increaseCount);
         }
-        throw new WalletNotFoundException(ExceptionConstants.WALLET_NOT_FOUND_EXCEPTION);
+        throw new WalletNotFoundException(ExceptionConstants.WALLET_NOT_FOUND);
     }
 
     @ExceptionHandler(value = RuntimeException.class)

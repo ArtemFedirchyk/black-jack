@@ -40,4 +40,16 @@ public class DefaultAccountService implements AccountService {
         return walletDao.exists(walletId);
     }
 
+    @Override
+    public GameTable increaseWalletsBalance(int walletId, double increaseCount) {
+        Wallet wallet = walletDao.findOne(walletId);
+        wallet.setBalance(wallet.getBalance() + increaseCount);
+
+        return new GameTable(walletDao.save(wallet));
+    }
+
+    @Override
+    public boolean isPlayerBalanceEnough(int walletId, double bet) {
+        return (walletDao.findOne(walletId).getBalance() >= bet);
+    }
 }
