@@ -18,4 +18,6 @@ public class ExceptionConstants {
 
     public static final String CARDS_ALREADY_DEALT = "Cards already dealt and you couldn't take new deal before game's finish";
 
+    public static final String HIT_ACTION_IS_NOT_POSSIBLE = "Hit action is possbile only after Deal or Hit actions, otherwise Hit action isn't possible";
+
 }
