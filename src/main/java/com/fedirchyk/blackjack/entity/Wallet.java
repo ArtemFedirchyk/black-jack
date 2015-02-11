@@ -28,14 +28,15 @@ public class Wallet {
     @Column(name = "balance", nullable = true)
     private double balance;
 
+    @JsonIgnore
     @Column(name = "operation", nullable = true)
     private String operation;
 
+    @JsonIgnore
     @Column(name = "time", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
-    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "wallet")
     private Game game;
 

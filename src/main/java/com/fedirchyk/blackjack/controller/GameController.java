@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fedirchyk.blackjack.exceptions.BetAlreadyMadeException;
 import com.fedirchyk.blackjack.exceptions.BetNotMadeException;
 import com.fedirchyk.blackjack.exceptions.ExceptionInformation;
 import com.fedirchyk.blackjack.exceptions.WalletBalanceNotEnoughException;
@@ -36,8 +37,6 @@ public class GameController {
 
     @Autowired
     private AccountService accountService;
-
-    private boolean isTempPlug;
 
     /**
      * Starts the Game process in next way - Player makes bet and game starts without asking about 'Deal' action
@@ -66,11 +65,14 @@ public class GameController {
      * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
     @RequestMapping(value = "/bet/{bet}", method = RequestMethod.GET)
-    public GameTable makeBet(@PathVariable int walletId, @PathVariable double bet) {
+    public GameTable makeBet(@PathVariable int walletId, @PathVariable int bet) {
         if (accountService.isWalletExist(walletId)) {
             if (accountService.isPlayerBalanceEnough(walletId, bet)) {
-                logger.info("Started process of making Bet with count of money - " + bet);
-                return null;
+                if (!gameService.isBetMade(walletId)) {
+                    logger.info("Started process of making Bet with count of coins - " + bet);
+                    return gameService.makeBet(walletId, bet);
+                }
+                throw new BetAlreadyMadeException(ExceptionConstants.BET_ALREADY_MADE);
             }
             throw new WalletBalanceNotEnoughException(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH);
         }
@@ -87,9 +89,9 @@ public class GameController {
     @RequestMapping(value = "/deal", method = RequestMethod.GET)
     public GameTable makeDeal(@PathVariable int walletId) {
         if (accountService.isWalletExist(walletId)) {
-            if (isTempPlug) {
+            if (gameService.isBetMade(walletId)) {
                 logger.info("Strated process when Player make DEAL action");
-                return null;
+                return gameService.dealAction(walletId);
             }
             throw new BetNotMadeException(ExceptionConstants.BET_NOT_MADE);
         }
@@ -105,7 +107,7 @@ public class GameController {
     public GameTable hit(@PathVariable int walletId) {
         if (accountService.isWalletExist(walletId)) {
             logger.info("Started process when Player makes HIT action");
-            return null;
+            return gameService.hitAction(walletId);
         }
         throw new WalletNotFoundException(ExceptionConstants.WALLET_NOT_FOUND);
     }
@@ -119,7 +121,7 @@ public class GameController {
     public GameTable stand(@PathVariable int walletId) {
         if (accountService.isWalletExist(walletId)) {
             logger.info("Started process when Player makes STAND action");
-            return null;
+            return gameService.standAction(walletId);
         }
         throw new WalletNotFoundException(ExceptionConstants.WALLET_NOT_FOUND);
     }

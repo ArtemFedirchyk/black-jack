@@ -20,9 +20,14 @@ public class GameTable implements Serializable {
 
     private String gameStatus;
 
-    private int dealerCoins;
+    @JsonIgnore
+    private String gameAction;
 
-    private int playerCoins;
+    private int dealerScores;
+
+    private int playerScores;
+
+    private int bet;
 
     @JsonIgnore
     private Card dealerHiddenCard;
@@ -54,20 +59,36 @@ public class GameTable implements Serializable {
         this.gameStatus = gameStatus;
     }
 
-    public int getDealerCoins() {
-        return dealerCoins;
+    public String getGameAction() {
+        return gameAction;
     }
 
-    public void setDealerCoins(int dealerCoins) {
-        this.dealerCoins = dealerCoins;
+    public void setGameAction(String gameAction) {
+        this.gameAction = gameAction;
     }
 
-    public int getPlayerCoins() {
-        return playerCoins;
+    public int getDealerScores() {
+        return dealerScores;
     }
 
-    public void setPlayerCoins(int playerCoins) {
-        this.playerCoins = playerCoins;
+    public void setDealerScores(int dealerScores) {
+        this.dealerScores = dealerScores;
+    }
+
+    public int getPlayerScores() {
+        return playerScores;
+    }
+
+    public void setPlayerScores(int playerScores) {
+        this.playerScores = playerScores;
+    }
+
+    public int getBet() {
+        return bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet = bet;
     }
 
     public Card getDealerHiddenCard() {

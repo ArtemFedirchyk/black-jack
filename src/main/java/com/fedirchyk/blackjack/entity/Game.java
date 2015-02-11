@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "game")
 public class Game {
@@ -24,10 +26,12 @@ public class Game {
     @Column(name = "game_id", nullable = false)
     private int gameId;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "wallet_id")
     private Wallet wallet;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "game")
     private List<Logging> loggingList = new LinkedList<Logging>();
 

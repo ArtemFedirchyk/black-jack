@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fedirchyk.blackjack.dao.WalletDao;
+import com.fedirchyk.blackjack.entity.Game;
 import com.fedirchyk.blackjack.entity.Wallet;
 import com.fedirchyk.blackjack.service.AccountService;
 import com.fedirchyk.blackjack.vo.GameTable;
@@ -27,11 +28,26 @@ public class DefaultAccountService implements AccountService {
 
     @Override
     public GameTable initializePlayer(double balance) {
-        Wallet wallet = new Wallet();
-        wallet.setBalance(balance);
-        wallet.setTime(new Date());
+        logger.info("Started initialising Player in BlacJack game process");
+        Wallet savedWallet = saveNewWallet(balance);
+        GameTable gameTable = new GameTable(savedWallet);
+        DefaultGameService.cachedGameTables.put(new Integer(savedWallet.getWalletId()), gameTable);
 
-        return new GameTable(walletDao.save(wallet));
+        return gameTable;
+    }
+
+    @Override
+    public GameTable increaseWalletsBalance(int walletId, double increaseCount) {
+        logger.info("Increasing balance for Wallet - ID [" + walletId + "], increase count is - [" + increaseCount
+                + "]");
+        Wallet wallet = walletDao.findOne(walletId);
+        wallet.setBalance(wallet.getBalance() + increaseCount);
+        walletDao.save(wallet);
+
+        GameTable gameTable = DefaultGameService.cachedGameTables.get(new Integer(walletId));
+        gameTable.setWallet(wallet);
+
+        return gameTable;
     }
 
     @Override
@@ -41,15 +57,20 @@ public class DefaultAccountService implements AccountService {
     }
 
     @Override
-    public GameTable increaseWalletsBalance(int walletId, double increaseCount) {
-        Wallet wallet = walletDao.findOne(walletId);
-        wallet.setBalance(wallet.getBalance() + increaseCount);
-
-        return new GameTable(walletDao.save(wallet));
+    public boolean isPlayerBalanceEnough(int walletId, double bet) {
+        logger.info("Checking is balane of Wallet - ID [" + walletId + "] is enough for bet - [" + bet + "]");
+        return (walletDao.findOne(walletId).getBalance() >= bet);
     }
 
-    @Override
-    public boolean isPlayerBalanceEnough(int walletId, double bet) {
-        return (walletDao.findOne(walletId).getBalance() >= bet);
+    private Wallet saveNewWallet(double balance) {
+        logger.info("Saving Player's Wallet in DB with balance - [" + balance + "]");
+        Wallet wallet = new Wallet();
+        Game game = new Game();
+        game.setWallet(wallet);
+        wallet.setGame(game);
+        wallet.setBalance(balance);
+        wallet.setTime(new Date());
+
+        return walletDao.save(wallet);
     }
 }
