@@ -46,11 +46,13 @@ public class GameController {
      * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
     @RequestMapping(value = "/start/{bet}", method = RequestMethod.GET)
-    public GameTable startGame(@PathVariable int walletId, @PathVariable double bet) {
+    public GameTable startGame(@PathVariable int walletId, @PathVariable int bet) {
         if (accountService.isWalletExist(walletId)) {
             if (accountService.isPlayerBalanceEnough(walletId, bet)) {
                 logger.info("Started game with bet - " + bet);
-                return null;
+                // TODO: Move validation and throwing Exceptions to low level
+                gameService.makeBet(walletId, bet);
+                return gameService.dealAction(walletId);
             }
             throw new WalletBalanceNotEnoughException(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH);
         }

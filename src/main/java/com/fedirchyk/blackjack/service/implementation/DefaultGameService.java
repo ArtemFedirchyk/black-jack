@@ -12,6 +12,7 @@ import com.fedirchyk.blackjack.entity.Game;
 import com.fedirchyk.blackjack.entity.Wallet;
 import com.fedirchyk.blackjack.exceptions.CardsAlreadyDealtException;
 import com.fedirchyk.blackjack.exceptions.HitActionNotPosibleException;
+import com.fedirchyk.blackjack.exceptions.StandActionNotPosibleException;
 import com.fedirchyk.blackjack.exceptions.constatnts.ExceptionConstants;
 import com.fedirchyk.blackjack.service.GameService;
 import com.fedirchyk.blackjack.service.gameengine.GameEngine;
@@ -74,6 +75,8 @@ public class DefaultGameService implements GameService {
         GameTable gameTable = cachedGameTables.get(new Integer(walletId));
 
         if (gameTable.getGameAction().equals(GameAction.BET.getAction())) {
+            gameTable.setGameAction(GameAction.DEAL.getAction());
+
             gameEngine.hangOutCardsDeck(gameTable.getCardDeck());
             gameEngine.dealCards(gameTable);
             gameEngine.countPlayerScores(gameTable);
@@ -82,8 +85,6 @@ public class DefaultGameService implements GameService {
             if (gameTable.getBet() == INITIAL_BET_STATE) {
                 walletDao.save(gameTable.getWallet());
             }
-
-            gameTable.setGameAction(GameAction.DEAL.getAction());
 
             return gameTable;
         }
@@ -95,33 +96,44 @@ public class DefaultGameService implements GameService {
         logger.info("Started performing of Hit action for Player with Wallet's ID - [" + walletId + "]");
         GameTable gameTable = cachedGameTables.get(new Integer(walletId));
 
-        if (gameTable.getGameAction().equals(GameAction.DEAL.getAction())
-                || gameTable.getGameAction().equals(GameAction.HIT.getAction())) {
-            gameTable.setGameAction(GameAction.HIT.getAction());
-            gameEngine.investigateGame(gameTable, GameAction.HIT.getAction());
+        if (gameTable.getGameStatus().equals(GameStatus.PENDING.getStatus())) {
+            if ((gameTable.getGameAction().equals(GameAction.DEAL.getAction()) || gameTable.getGameAction().equals(
+                    GameAction.HIT.getAction()))) {
+                gameTable.setGameAction(GameAction.HIT.getAction());
+                gameEngine.investigateGame(gameTable, GameAction.HIT.getAction());
 
-            if (gameTable.getGameStatus().equals(GameStatus.LOOSE)) {
-                walletDao.save(gameTable.getWallet());
+                if (gameTable.getGameStatus().equals(GameStatus.LOOSE)) {
+                    walletDao.save(gameTable.getWallet());
+                }
+
+                return gameTable;
             }
-
-            return gameTable;
+            throw new HitActionNotPosibleException(ExceptionConstants.HIT_ACTION_IS_NOT_POSSIBLE_WRONG_ACTION);
         }
-
-        throw new HitActionNotPosibleException(ExceptionConstants.HIT_ACTION_IS_NOT_POSSIBLE);
+        throw new HitActionNotPosibleException(ExceptionConstants.HIT_ACTION_IS_NOT_POSSIBLE_WRONG_STATUS);
     }
 
     @Override
     public GameTable standAction(int walletId) {
+        logger.info("Started performing of Stand Action for Player wit Wallet's ID -[" + walletId + "]");
         GameTable gameTable = cachedGameTables.get(new Integer(walletId));
-        gameTable.setGameAction(GameAction.STAND.getAction());
 
-        gameEngine.investigateGame(gameTable, GameAction.STAND.getAction());
+        if (gameTable.getGameStatus().equals(GameStatus.PENDING.getStatus())) {
+            if (gameTable.getGameAction().equals(GameAction.DEAL.getAction())
+                    || gameTable.getGameAction().equals(GameAction.HIT.getAction())) {
+                gameTable.setGameAction(GameAction.STAND.getAction());
 
-        if (gameTable.getGameStatus().equals(GameStatus.DRAW.getStatus())) {
-            walletDao.save(gameTable.getWallet());
+                gameEngine.investigateGame(gameTable, GameAction.STAND.getAction());
+
+                if (gameTable.getGameStatus().equals(GameStatus.DRAW.getStatus())) {
+                    walletDao.save(gameTable.getWallet());
+                }
+
+                return gameTable;
+            }
+            throw new StandActionNotPosibleException(ExceptionConstants.STAND_ACTION_IS_NOT_POSSIBLE_WRONG_ACTION);
         }
-
-        return gameTable;
+        throw new StandActionNotPosibleException(ExceptionConstants.STAND_ACTION_IS_NOT_POSSIBLE_WRONG_STATUS);
     }
 
     private void initNewGame(GameTable gameTable) {

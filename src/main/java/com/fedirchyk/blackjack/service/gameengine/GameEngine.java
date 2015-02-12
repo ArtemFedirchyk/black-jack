@@ -48,16 +48,14 @@ public class GameEngine {
      * @param gameTable
      *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
      *            state
-     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    public GameTable dealCards(GameTable gameTable) {
+    public void dealCards(GameTable gameTable) {
         logger.info("Started process of dealing Cards");
         gameTable.getPlayerCards().add(gameTable.getCardDeck().pop());
         gameTable.getPlayerCards().add(gameTable.getCardDeck().pop());
         gameTable.getDealerCards().add(gameTable.getCardDeck().pop());
         gameTable.setDealerHiddenCard(gameTable.getCardDeck().pop());
         gameTable.setGameStatus(GameStatus.PENDING.getStatus());
-        return gameTable;
     }
 
     /**
@@ -66,10 +64,8 @@ public class GameEngine {
      * @param gameTable
      *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
      *            state
-     * 
-     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    public GameTable countPlayerScores(GameTable gameTable) {
+    public void countPlayerScores(GameTable gameTable) {
         logger.info("Started process of counting scores for Player");
         int playerScores = 0;
         Stack<Card> playerCards = gameTable.getPlayerCards();
@@ -82,7 +78,6 @@ public class GameEngine {
         }
         gameTable.setPlayerScores(playerScores);
         logger.info("Return scores for Player with count - [" + playerScores + "]");
-        return gameTable;
     }
 
     /**
@@ -91,9 +86,8 @@ public class GameEngine {
      * @param gameTable
      *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
      *            state
-     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    public GameTable countDealerScores(GameTable gameTable) {
+    public void countDealerScores(GameTable gameTable) {
         logger.info("Started process of counting scores for Dealer");
         int dealerScores = 0;
         Stack<Card> dealerCards = gameTable.getDealerCards();
@@ -107,7 +101,6 @@ public class GameEngine {
         }
         gameTable.setDealerScores(dealerScores);
         logger.info("Return scores for Dealer with count - [" + dealerScores + "]");
-        return gameTable;
     }
 
     /**
@@ -118,24 +111,11 @@ public class GameEngine {
      *            state
      * @param gameAction
      *            - value of kind of Game action
-     * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
-    public GameTable investigateGame(GameTable gameTable, String gameAction) {
+    public void investigateGame(GameTable gameTable, String gameAction) {
         if (gameAction.equals(GameAction.START_GAME.getAction())
                 && gameTable.getPlayerScores() == BLACK_JACK_COMBINATION) {
-            Stack<Card> dealerCards = gameTable.getDealerCards();
-            dealerCards.push(gameTable.getDealerHiddenCard());
-            countDealerScores(gameTable);
-            if (gameTable.getDealerScores() == BLACK_JACK_COMBINATION) {
-                gameTable.setGameStatus(GameStatus.DRAW.getStatus());
-                double walletBalance = gameTable.getWallet().getBalance() + gameTable.getBet();
-                gameTable.getWallet().setBalance(walletBalance);
-            }
-            gameTable.setGameStatus(GameStatus.WIN.getStatus());
-            double walletBalanceBJ = gameTable.getWallet().getBalance() + (gameTable.getBet() * 3);
-            gameTable.getWallet().setBalance(walletBalanceBJ);
-            gameTable.setBet(INITIAL_STATE);
-            return gameTable;
+            investigateBlackJackCase(gameTable);
         }
 
         if (gameAction.equals(GameAction.HIT.getAction())) {
@@ -145,10 +125,16 @@ public class GameEngine {
         if (gameAction.equals(GameAction.STAND.getAction())) {
             standAction(gameTable);
         }
-
-        return gameTable;
     }
 
+    /**
+     * Destroy Game after finishing of this Game, it means this method set initial state for all Game's attributes. And
+     * after that new Game process will be possible.
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     public void destroyGame(GameTable gameTable) {
         gameTable.setBet(INITIAL_STATE);
         gameTable.setPlayerScores(INITIAL_STATE);
@@ -160,11 +146,28 @@ public class GameEngine {
         gameTable.setGameAction(null);
     }
 
+    private void investigateBlackJackCase(GameTable gameTable) {
+        logger.info("Performing investigation of BlackJack Case");
+        Stack<Card> dealerCards = gameTable.getDealerCards();
+        dealerCards.push(gameTable.getDealerHiddenCard());
+        countDealerScores(gameTable);
+        if (gameTable.getDealerScores() == BLACK_JACK_COMBINATION) {
+            gameTable.setGameStatus(GameStatus.DRAW.getStatus());
+            double walletBalance = gameTable.getWallet().getBalance() + gameTable.getBet();
+            gameTable.getWallet().setBalance(walletBalance);
+        }
+        gameTable.setGameStatus(GameStatus.WIN.getStatus());
+        double walletBalanceBJ = gameTable.getWallet().getBalance() + gameTable.getBet() + (gameTable.getBet() * 1.5);
+        gameTable.getWallet().setBalance(walletBalanceBJ);
+        gameTable.setBet(INITIAL_STATE);
+    }
+
     private void hitAction(GameTable gameTable) {
         logger.info("Performing of HIT action (low level)");
         gameTable.getPlayerCards().add(gameTable.getCardDeck().pop());
-        if (countPlayerScores(gameTable).getPlayerScores() > BLACK_JACK_COMBINATION) {
-            logger.info("Case when Player loose game");
+        countPlayerScores(gameTable);
+        if (gameTable.getPlayerScores() > BLACK_JACK_COMBINATION) {
+            logger.info("Case when Player loosed game");
             gameTable.setGameStatus(GameStatus.LOOSE.getStatus());
             gameTable.setBet(INITIAL_STATE);
             gameTable.getDealerCards().push(gameTable.getDealerHiddenCard());
@@ -202,6 +205,12 @@ public class GameEngine {
 
         countDealerScores(gameTable);
         int dealerScores = gameTable.getDealerScores();
+
+        if (dealerScores == BLACK_JACK_COMBINATION && gameTable.getPlayerScores() != BLACK_JACK_COMBINATION) {
+            gameTable.setGameStatus(GameStatus.LOOSE.getStatus());
+            gameTable.setBet(INITIAL_STATE);
+        }
+
         Stack<Card> dealerCards = gameTable.getDealerCards();
 
         if (dealerScores < DEALER_MAX_HITCARDS_SCORERS_COUNT || dealerScores != BLACK_JACK_COMBINATION) {
