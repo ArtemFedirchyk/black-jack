@@ -60,6 +60,9 @@ public class DefaultGameService implements GameService {
         gameTable.setGameStatus(GameStatus.PENDING.getStatus());
         gameTable.setGameAction(GameAction.BET.getAction());
 
+        logger.info("Actual Game ID - [" + gameTable.getWallet().getGame().getGameId() + "] for Player' Wallet ID ["
+                + gameTable.getWallet().getWalletId() + "]");
+
         return gameTable;
     }
 
