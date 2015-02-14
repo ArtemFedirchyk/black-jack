@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.fedirchyk.blackjack.dao.WalletDao;
 import com.fedirchyk.blackjack.entity.Game;
 import com.fedirchyk.blackjack.entity.Wallet;
+import com.fedirchyk.blackjack.exceptions.BetAlreadyMadeException;
+import com.fedirchyk.blackjack.exceptions.BetNotMadeException;
 import com.fedirchyk.blackjack.exceptions.CardsAlreadyDealtException;
 import com.fedirchyk.blackjack.exceptions.HitActionNotPosibleException;
 import com.fedirchyk.blackjack.exceptions.StandActionNotPosibleException;
@@ -41,59 +43,79 @@ public class DefaultGameService implements GameService {
     @Autowired
     private GameEngine gameEngine;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GameTable makeBet(int walletId, int bet) {
         logger.info("Started process of making Bet - [" + bet + "] for Wallet ID - [" + walletId + "]");
 
-        GameTable gameTable = cachedGameTables.get(new Integer(walletId));
-        if (gameTable.getGameStatus() != null) {
-            initNewGame(gameTable);
+        if (!isBetMade(walletId)) {
+
+            GameTable gameTable = cachedGameTables.get(new Integer(walletId));
+            if (gameTable.getGameStatus() != null) {
+                initNewGame(gameTable);
+            }
+
+            Wallet wallet = cachedGameTables.get(new Integer(walletId)).getWallet();
+
+            wallet.setBalance(wallet.getBalance() - bet);
+            walletDao.save(wallet);
+
+            gameTable.setWallet(wallet);
+            gameTable.setBet(bet);
+            gameTable.setGameStatus(GameStatus.PENDING.getStatus());
+            gameTable.setGameAction(GameAction.BET.getAction());
+
+            logger.info("Actual Game ID - [" + gameTable.getWallet().getGame().getGameId()
+                    + "] for Player' Wallet ID [" + gameTable.getWallet().getWalletId() + "]");
+
+            return gameTable;
         }
+        throw new BetAlreadyMadeException(ExceptionConstants.BET_ALREADY_MADE);
 
-        Wallet wallet = cachedGameTables.get(new Integer(walletId)).getWallet();
-
-        wallet.setBalance(wallet.getBalance() - bet);
-        walletDao.save(wallet);
-
-        gameTable.setWallet(wallet);
-        gameTable.setBet(bet);
-        gameTable.setGameStatus(GameStatus.PENDING.getStatus());
-        gameTable.setGameAction(GameAction.BET.getAction());
-
-        logger.info("Actual Game ID - [" + gameTable.getWallet().getGame().getGameId() + "] for Player' Wallet ID ["
-                + gameTable.getWallet().getWalletId() + "]");
-
-        return gameTable;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isBetMade(int walletId) {
         logger.info("Started checking is Bet made by Player with Wallet's ID - [" + walletId + "]");
         return (cachedGameTables.get(new Integer(walletId)).getBet() != INITIAL_BET_STATE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GameTable dealAction(int walletId) {
         logger.info("Started process of Deal action for Player with Wallet's ID - [" + walletId + "]");
         GameTable gameTable = cachedGameTables.get(new Integer(walletId));
 
-        if (gameTable.getGameAction().equals(GameAction.BET.getAction())) {
-            gameTable.setGameAction(GameAction.DEAL.getAction());
+        if (isBetMade(walletId)) {
+            if (gameTable.getGameAction().equals(GameAction.BET.getAction())) {
+                gameTable.setGameAction(GameAction.DEAL.getAction());
 
-            gameEngine.hangOutCardsDeck(gameTable.getCardDeck());
-            gameEngine.dealCards(gameTable);
-            gameEngine.countPlayerScores(gameTable);
-            gameEngine.investigateGame(gameTable, GameAction.START_GAME.getAction());
+                gameEngine.hangOutCardsDeck(gameTable.getCardDeck());
+                gameEngine.dealCards(gameTable);
+                gameEngine.countPlayerScores(gameTable);
+                gameEngine.investigateGame(gameTable, GameAction.START_GAME.getAction());
 
-            if (gameTable.getBet() == INITIAL_BET_STATE) {
-                walletDao.save(gameTable.getWallet());
+                if (gameTable.getBet() == INITIAL_BET_STATE) {
+                    walletDao.save(gameTable.getWallet());
+                }
+
+                return gameTable;
             }
-
-            return gameTable;
+            throw new CardsAlreadyDealtException(ExceptionConstants.CARDS_ALREADY_DEALT);
         }
-        throw new CardsAlreadyDealtException(ExceptionConstants.CARDS_ALREADY_DEALT);
+        throw new BetNotMadeException(ExceptionConstants.BET_NOT_MADE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GameTable hitAction(int walletId) {
         logger.info("Started performing of Hit action for Player with Wallet's ID - [" + walletId + "]");
@@ -116,6 +138,9 @@ public class DefaultGameService implements GameService {
         throw new HitActionNotPosibleException(ExceptionConstants.HIT_ACTION_IS_NOT_POSSIBLE_WRONG_STATUS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GameTable standAction(int walletId) {
         logger.info("Started performing of Stand Action for Player wit Wallet's ID -[" + walletId + "]");
@@ -124,13 +149,10 @@ public class DefaultGameService implements GameService {
         if (gameTable.getGameStatus().equals(GameStatus.PENDING.getStatus())) {
             if (gameTable.getGameAction().equals(GameAction.DEAL.getAction())
                     || gameTable.getGameAction().equals(GameAction.HIT.getAction())) {
+
                 gameTable.setGameAction(GameAction.STAND.getAction());
-
-                gameEngine.investigateGame(gameTable, GameAction.STAND.getAction());
-
-                if (gameTable.getGameStatus().equals(GameStatus.DRAW.getStatus())) {
-                    walletDao.save(gameTable.getWallet());
-                }
+                gameEngine.investigateGame(gameTable, gameTable.getGameAction());
+                walletDao.save(gameTable.getWallet());
 
                 return gameTable;
             }
@@ -139,6 +161,14 @@ public class DefaultGameService implements GameService {
         throw new StandActionNotPosibleException(ExceptionConstants.STAND_ACTION_IS_NOT_POSSIBLE_WRONG_STATUS);
     }
 
+    /**
+     * Initializes new Game for current Player's Wallet, during process of Bet making. Performs only when previous Game
+     * is finished.
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     private void initNewGame(GameTable gameTable) {
         logger.info("Initialization of new Game for Player's Wallet ID - [" + gameTable.getWallet().getWalletId() + "]");
         gameEngine.destroyGame(gameTable);

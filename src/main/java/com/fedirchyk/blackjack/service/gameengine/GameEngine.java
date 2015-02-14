@@ -81,7 +81,7 @@ public class GameEngine {
         for (Card playerCard : playerCards) {
             playerScores += playerCard.getRank().getCardValue();
         }
-        if (playerScores > BLACK_JACK_COMBINATION && isCardDeackContainsAce(playerCards)) {
+        if (playerScores > BLACK_JACK_COMBINATION && isCardsContainAce(playerCards)) {
             logger.info("Situation when Ace gives 1 score instead 10 in case with Player");
             playerScores -= MAX_HIT_CARDS_SCORES_COUNT;
         }
@@ -104,7 +104,7 @@ public class GameEngine {
         for (Card dealerCard : dealerCards) {
             dealerScores += dealerCard.getRank().getCardValue();
         }
-        if (dealerScores > BLACK_JACK_COMBINATION && isCardDeackContainsAce(dealerCards)) {
+        if (dealerScores > BLACK_JACK_COMBINATION && isCardsContainAce(dealerCards)) {
             logger.info("Situation when Ace gives 1 score instead 10 in case with Dealer");
             dealerScores -= MAX_HIT_CARDS_SCORES_COUNT;
         }
@@ -157,8 +157,15 @@ public class GameEngine {
         gameTable.setGameAction(null);
     }
 
+    /**
+     * Performs all low-level logic associated with HIT action
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     private void hitAction(GameTable gameTable) {
-        logger.info("Performing of HIT action (low level)");
+        logger.info("Performing of HIT action (low-level)");
 
         gameTable.getPlayerCards().add(gameTable.getCardDeck().pop());
         countPlayerScores(gameTable);
@@ -171,8 +178,15 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Performs all low-level logic associated with STAND action
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     private void standAction(GameTable gameTable) {
-        logger.info("Performing of STAND action (low level)");
+        logger.info("Performing of STAND action (low-level)");
 
         dealerGame(gameTable);
 
@@ -195,6 +209,13 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Performs logic for Dealer's game, such as taking new Cards according to situational conditions
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     private void dealerGame(GameTable gameTable) {
         logger.info("Started Dealer game process");
 
@@ -216,6 +237,13 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Investigates possibility of BlackJack case for Player during Game process
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     private void investigatePlayerBlackJackCase(GameTable gameTable) {
         logger.info("Performing investigation of BlackJack Case");
         Stack<Card> dealerCards = gameTable.getDealerCards();
@@ -232,6 +260,13 @@ public class GameEngine {
         gameTable.setBet(INITIAL_STATE);
     }
 
+    /**
+     * Investigates possibility of BlackJack case for Dealer during Game process
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     */
     private void investigateDealerBlackJackCase(GameTable gameTable) {
         logger.info("Started investigation of Dealer's Black Jack case");
 
@@ -242,7 +277,14 @@ public class GameEngine {
         }
     }
 
-    private boolean isCardDeackContainsAce(Stack<Card> cards) {
+    /**
+     * Checks is there Ace card among a set of Cards for checking
+     * 
+     * @param cards
+     *            - set of Cards for checking
+     * @return <b>true</b> if Cards contain Ace card and <b>false</b> if Cards don't contain Ace card
+     */
+    private boolean isCardsContainAce(Stack<Card> cards) {
         return (cards.contains(new Card(Rank.ACE, Suit.CLUBS)) || cards.contains(new Card(Rank.ACE, Suit.DIAMONDS))
                 || cards.contains(new Card(Rank.ACE, Suit.HEARTS)) || cards.contains(new Card(Rank.ACE, Suit.SPADES)));
     }

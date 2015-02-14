@@ -70,11 +70,11 @@ public class GameController {
     public GameTable makeBet(@PathVariable int walletId, @PathVariable int bet) {
         if (accountService.isWalletExist(walletId)) {
             if (accountService.isPlayerBalanceEnough(walletId, bet)) {
-                if (!gameService.isBetMade(walletId)) {
+//                if (!gameService.isBetMade(walletId)) {
                     logger.info("Started process of making Bet with count of coins - " + bet);
                     return gameService.makeBet(walletId, bet);
-                }
-                throw new BetAlreadyMadeException(ExceptionConstants.BET_ALREADY_MADE);
+//                }
+//                throw new BetAlreadyMadeException(ExceptionConstants.BET_ALREADY_MADE);
             }
             throw new WalletBalanceNotEnoughException(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH);
         }
@@ -91,11 +91,11 @@ public class GameController {
     @RequestMapping(value = "/deal", method = RequestMethod.GET)
     public GameTable makeDeal(@PathVariable int walletId) {
         if (accountService.isWalletExist(walletId)) {
-            if (gameService.isBetMade(walletId)) {
+//            if (gameService.isBetMade(walletId)) {
                 logger.info("Strated process when Player make DEAL action");
                 return gameService.dealAction(walletId);
-            }
-            throw new BetNotMadeException(ExceptionConstants.BET_NOT_MADE);
+//            }
+//            throw new BetNotMadeException(ExceptionConstants.BET_NOT_MADE);
         }
         throw new WalletNotFoundException(ExceptionConstants.WALLET_NOT_FOUND);
     }
