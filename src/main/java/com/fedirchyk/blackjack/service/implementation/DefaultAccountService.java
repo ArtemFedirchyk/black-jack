@@ -26,6 +26,9 @@ public class DefaultAccountService implements AccountService {
     @Autowired
     private WalletDao walletDao;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GameTable initializePlayer(double balance) {
         logger.info("Started initialising Player in BlacJack game process");
@@ -36,6 +39,9 @@ public class DefaultAccountService implements AccountService {
         return gameTable;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GameTable increaseWalletsBalance(int walletId, double increaseCount) {
         logger.info("Increasing balance for Wallet - ID [" + walletId + "], increase count is - [" + increaseCount
@@ -50,18 +56,31 @@ public class DefaultAccountService implements AccountService {
         return gameTable;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isWalletExist(int walletId) {
         logger.info("Started process of checking is Player's Wallet with ID - [" + walletId + "] exist in DB");
         return walletDao.exists(walletId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isPlayerBalanceEnough(int walletId, double bet) {
         logger.info("Checking is balane of Wallet - ID [" + walletId + "] is enough for bet - [" + bet + "]");
         return (walletDao.findOne(walletId).getBalance() >= bet);
     }
 
+    /**
+     * Saves new Wallet in DB with incoming value of Wallet's balance and with initial Game
+     * 
+     * @param balance
+     *            - value of balance, which will be saved as Wallet's initial balance
+     * @return - object of saved Wallet in DB (Wallet Entity)
+     */
     private Wallet saveNewWallet(double balance) {
         logger.info("Saving Player's Wallet in DB with balance - [" + balance + "]");
         Wallet wallet = new Wallet();

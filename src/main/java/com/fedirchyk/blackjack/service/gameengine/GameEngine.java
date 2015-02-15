@@ -63,7 +63,6 @@ public class GameEngine {
         gameTable.getPlayerCards().add(gameTable.getCardDeck().pop());
         gameTable.getDealerCards().add(gameTable.getCardDeck().pop());
         gameTable.setDealerHiddenCard(gameTable.getCardDeck().pop());
-        gameTable.setGameStatus(GameStatus.PENDING.getStatus());
     }
 
     /**
@@ -253,6 +252,8 @@ public class GameEngine {
             gameTable.setGameStatus(GameStatus.DRAW.getStatus());
             double walletBalance = gameTable.getWallet().getBalance() + gameTable.getBet();
             gameTable.getWallet().setBalance(walletBalance);
+            gameTable.setBet(INITIAL_STATE);
+            return;
         }
         gameTable.setGameStatus(GameStatus.WIN.getStatus());
         double walletBalanceBJ = gameTable.getWallet().getBalance() + gameTable.getBet() + (gameTable.getBet() * 1.5);

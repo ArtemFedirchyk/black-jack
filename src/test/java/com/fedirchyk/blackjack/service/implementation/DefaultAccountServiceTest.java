@@ -40,6 +40,12 @@ public class DefaultAccountServiceTest {
         Assert.assertTrue(isWalletExist);
     }
 
+    public void testIsWalletExistFalse() {
+        int fakeID = 500;
+        boolean isWalletExist = accountService.isWalletExist(fakeID);
+        Assert.assertFalse(isWalletExist);
+    }
+
     @Test
     public void testIsWalletsBalanceCorrect() {
         Assert.assertEquals(DEFAULT_BALANCE, gameTable.getWallet().getBalance(), 0);
@@ -51,7 +57,8 @@ public class DefaultAccountServiceTest {
         GameTable gameTableWithNewBalance = accountService.increaseWalletsBalance(gameTable.getWallet().getWalletId(),
                 increaseCount);
         double newBalance = gameTableWithNewBalance.getWallet().getBalance();
-        Assert.assertEquals(235.25, newBalance, 0);
+        double expectedBalance = increaseCount + DEFAULT_BALANCE;
+        Assert.assertEquals(expectedBalance, newBalance, 0);
     }
 
     @Test

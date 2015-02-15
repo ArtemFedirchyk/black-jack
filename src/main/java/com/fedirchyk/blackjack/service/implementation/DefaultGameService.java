@@ -102,10 +102,6 @@ public class DefaultGameService implements GameService {
                 gameEngine.countPlayerScores(gameTable);
                 gameEngine.investigateGame(gameTable, GameAction.START_GAME.getAction());
 
-                if (gameTable.getBet() == INITIAL_BET_STATE) {
-                    walletDao.save(gameTable.getWallet());
-                }
-
                 return gameTable;
             }
             throw new CardsAlreadyDealtException(ExceptionConstants.CARDS_ALREADY_DEALT);
