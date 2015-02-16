@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -122,7 +123,6 @@ public class DefaultGameServiceTest {
         gameService.makeBet(walletId, BET_COUNT);
         gameService.dealAction(walletId);
         gameService.hitAction(walletId);
-        Assert.assertEquals(GameStatus.PENDING.getStatus(), gameTable.getGameStatus());
         Assert.assertEquals(GameAction.HIT.getAction(), gameTable.getGameAction());
     }
 
