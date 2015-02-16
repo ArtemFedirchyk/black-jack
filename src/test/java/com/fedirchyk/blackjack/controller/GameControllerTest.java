@@ -66,17 +66,6 @@ public class GameControllerTest {
         results.andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    public void testStartGameReturnsCorrectBalanceAndGameStatusResult() throws Exception{
-        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
-        mockMvcAccountController.perform(initializePlayerResult);
-
-        MockHttpServletRequestBuilder startedGameResult = get("/game/1/start/50").accept(MediaType.ALL);
-        ResultActions results = mockMvcGameController.perform(startedGameResult);
-
-        results.andExpect(jsonPath("$.wallet.balance").value(50));
-        results.andExpect(jsonPath("$.gameStatus").value(GameStatus.PENDING.getStatus()));
-    }
-
     @Test
     public void testStartGameWalletNotFoundExceptionReturnsJSON() throws Exception {
         MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
@@ -86,17 +75,6 @@ public class GameControllerTest {
         ResultActions results = mockMvcGameController.perform(startedGameResult);
 
         results.andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    public void testStartGameThrowsWalletNotFoundException() throws Exception {
-        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
-        mockMvcAccountController.perform(initializePlayerResult);
-
-        MockHttpServletRequestBuilder startedGameResult = get("/game/404/start/50").accept(MediaType.ALL);
-        ResultActions results = mockMvcGameController.perform(startedGameResult);
-
-        results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_NOT_FOUND));
     }
 
     @Ignore
@@ -109,6 +87,17 @@ public class GameControllerTest {
         ResultActions results = mockMvcGameController.perform(startedGameResult);
 
         results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH));
+    }
+
+    @Test
+    public void testStartGameThrowsWalletNotFoundException() throws Exception {
+        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
+        mockMvcAccountController.perform(initializePlayerResult);
+
+        MockHttpServletRequestBuilder startedGameResult = get("/game/404/start/50").accept(MediaType.ALL);
+        ResultActions results = mockMvcGameController.perform(startedGameResult);
+
+        results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_NOT_FOUND));
     }
 
     @Test
@@ -126,17 +115,6 @@ public class GameControllerTest {
 
         results.andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
-    
-    @Test
-    public void testMakeBetThrowsWalletNotFoundExceptionException() throws Exception {
-        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
-        mockMvcAccountController.perform(initializePlayerResult);
-
-        MockHttpServletRequestBuilder startedGameResult = get("/game/404/bet/50").accept(MediaType.ALL);
-        ResultActions results = mockMvcGameController.perform(startedGameResult);
-
-        results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_NOT_FOUND));
-    }
 
     @Ignore
     @Test
@@ -148,6 +126,17 @@ public class GameControllerTest {
         ResultActions results = mockMvcGameController.perform(startedGameResult);
 
         results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH));
+    }
+
+    @Test
+    public void testMakeBetThrowsWalletNotFoundExceptionException() throws Exception {
+        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
+        mockMvcAccountController.perform(initializePlayerResult);
+
+        MockHttpServletRequestBuilder startedGameResult = get("/game/404/bet/50").accept(MediaType.ALL);
+        ResultActions results = mockMvcGameController.perform(startedGameResult);
+
+        results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_NOT_FOUND));
     }
 
     @Test
@@ -203,7 +192,7 @@ public class GameControllerTest {
 
         results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_NOT_FOUND));
     }
-    
+
     @Test
     public void testStandIsOk() throws Exception {
         MockHttpServletRequestBuilder startedGamPlayerResult = get("/game/1/stand").accept(MediaType.ALL);
