@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fedirchyk.blackjack.exceptions.constatnts.ExceptionConstants;
+import com.fedirchyk.blackjack.vo.enumerations.GameAction;
 import com.fedirchyk.blackjack.vo.enumerations.GameStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -77,18 +77,6 @@ public class GameControllerTest {
         results.andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    @Ignore
-    @Test
-    public void testStartGameThrowsWalletBalanceNotEnoughException() throws Exception {
-        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
-        mockMvcAccountController.perform(initializePlayerResult);
-
-        MockHttpServletRequestBuilder startedGameResult = get("/game/1/start/500").accept(MediaType.ALL);
-        ResultActions results = mockMvcGameController.perform(startedGameResult);
-
-        results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH));
-    }
-
     @Test
     public void testStartGameThrowsWalletNotFoundException() throws Exception {
         MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
@@ -114,18 +102,6 @@ public class GameControllerTest {
         ResultActions results = mockMvcGameController.perform(startedGamPlayerResult);
 
         results.andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Ignore
-    @Test
-    public void testMakeBetThrowsWalletBalanceNotEnoughException() throws Exception {
-        MockHttpServletRequestBuilder initializePlayerResult = get("/initPlayer").accept(MediaType.ALL);
-        mockMvcAccountController.perform(initializePlayerResult);
-
-        MockHttpServletRequestBuilder startedGameResult = get("/game/1/bet/500").accept(MediaType.ALL);
-        ResultActions results = mockMvcGameController.perform(startedGameResult);
-
-        results.andExpect(jsonPath("$.exception").value(ExceptionConstants.WALLET_BALANCE_NOT_ENOUGH));
     }
 
     @Test
