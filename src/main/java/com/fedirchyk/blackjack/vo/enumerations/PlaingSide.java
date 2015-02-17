@@ -6,13 +6,13 @@ package com.fedirchyk.blackjack.vo.enumerations;
  * @author artem.fedirchyk
  * 
  */
-public enum Participant {
+public enum PlaingSide {
 
     DEALER("dealer"), PLAYER("player");
 
     private String participant;
 
-    Participant(String participent) {
+    PlaingSide(String participent) {
         this.participant = participent;
     }
 
