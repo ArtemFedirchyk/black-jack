@@ -1,0 +1,23 @@
+Main requests for BlackJack game:
+
+For initialization new Player in Game process you can use next requests:
+	1) localhost:8080/initPlayer
+		As result you will create Player with default wallet's balance = 100.
+	2) localhost:8080/initPlayerBalance/500
+		As result you will create Player with custom wallet's balance, in this case ballance will be equal 500.	 
+
+For starting new Game you have 2 ways:
+	
+	1) You could make 2 steps (make Bet and make Deal actions)
+		1. localhost:8080/game/1/bet/100
+		2. localhost:8080/game/1/deal
+			"1" - this is the value of wallet's ID, whic is register in DB as wallet of initialised Player. In Bet action Case "100" - this is value of Player's Bet for curent Game.
+	2) Or you could make only 1 step (make Start action, which combains Bet and Deal actions)
+		localhost:8080/game/2/start/500
+			"2" - this is the value of wallet's ID, which is register in DB as wallet of initialised Player, "500" - this is value of Player's Bet for curent Game.
+
+Then You could make Hit or Stand action, for you choise:
+	1) localhost:8080/game/2/hit
+		After performing of this action You could make Hit action again or You could make Stand action if number of your game's scores count is enough for You. 
+	2) localhost:8080/game/2/stand
+		After performing of this action Game process will stop and you will see the result of this Game.			
