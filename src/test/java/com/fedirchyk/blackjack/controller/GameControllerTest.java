@@ -21,8 +21,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fedirchyk.blackjack.exceptions.constatnts.ExceptionConstants;
-import com.fedirchyk.blackjack.vo.enumerations.GameAction;
-import com.fedirchyk.blackjack.vo.enumerations.GameStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:test-application-context.xml")

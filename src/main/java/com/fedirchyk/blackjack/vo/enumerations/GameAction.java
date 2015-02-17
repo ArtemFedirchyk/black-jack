@@ -8,8 +8,8 @@ package com.fedirchyk.blackjack.vo.enumerations;
  */
 public enum GameAction {
 
-    START_GAME("start"), FINISH_GAME("finish"), DEAL("deal"), BET("bet"), STAND("stand"), HIT("hit"), REPLENISH(
-            "replenish");
+    START_GAME("start"), FINISH_GAME("finish"), DEAL("deal"), BET("bet"), STAND("stand"), HIT("hit"), BALANCE_RECHARGE(
+            "balance recharge");
 
     private String action;
 
