@@ -17,10 +17,12 @@ import com.fedirchyk.blackjack.exceptions.HitActionNotPosibleException;
 import com.fedirchyk.blackjack.exceptions.StandActionNotPosibleException;
 import com.fedirchyk.blackjack.exceptions.constatnts.ExceptionConstants;
 import com.fedirchyk.blackjack.service.GameService;
+import com.fedirchyk.blackjack.service.LogsService;
 import com.fedirchyk.blackjack.service.gameengine.GameEngine;
 import com.fedirchyk.blackjack.vo.GameTable;
 import com.fedirchyk.blackjack.vo.enumerations.GameAction;
 import com.fedirchyk.blackjack.vo.enumerations.GameStatus;
+import com.fedirchyk.blackjack.vo.enumerations.PlayingSide;
 
 /**
  * Contains implementation of all functional logic associated with Game process
@@ -43,6 +45,9 @@ public class DefaultGameService implements GameService {
     @Autowired
     private GameEngine gameEngine;
 
+    @Autowired
+    private LogsService logsService;
+
     /**
      * {@inheritDoc}
      */
@@ -55,6 +60,7 @@ public class DefaultGameService implements GameService {
             GameTable gameTable = cachedGameTables.get(new Integer(walletId));
             if (gameTable.getGameStatus() != null) {
                 initNewGame(gameTable);
+                logsService.writeGameActionLog(gameTable, GameAction.START_GAME.getAction(), PlayingSide.PLAYER.getPlaingSide());
             }
 
             Wallet wallet = cachedGameTables.get(new Integer(walletId)).getWallet();

@@ -20,11 +20,37 @@ public interface LogsService {
      * @param gameTable
      *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
      *            state
+     * @param gameAction
+     *            - value of some Game Action, which will be logged
+     * @param playingSide
+     *            - one of member of Game process, it could be Player or Dealer
      * @return - object of {@link Logging} type, which contains information about last record to DB, which is related to
      *         one of the above game actions
      */
-    Logging writeGameActionLog(GameTable gameTable, String gameAction, String plaingSide);
+    Logging writeGameActionLog(GameTable gameTable, String gameAction, String playingSide);
 
+    /**
+     * Writes log which is related to some of Account actions, such as 'Player initialization' or 'Balance recharge'.
+     * This record goes to DB.
+     * 
+     * @param gameTable
+     *            - Object of {@link GameTable} type, which contains all information about Player's wallet and Game
+     *            state
+     * @param accountAction
+     *            - value of some Account Action, which will be logged
+     * 
+     * @return - object of {@link Logging} type, which contains information about last record to DB, which is related to
+     *         one of the above game actions
+     */
+    Logging writeAccountActionLog(GameTable gameTable, String accountAction);
+
+    /**
+     * Gives all Logs from DB for some specified Game
+     * 
+     * @param gameId
+     *            - value of Game ID, which will be used for searching needed Logs
+     * @return list of {@link Logging} objects? which contain logging information related to specified Game
+     */
     List<Logging> getAllLogs(int gameId);
 
 }

@@ -28,16 +28,16 @@ public class Logging {
     private String operation;
 
     @Column(name = "operation_type")
-    private String operstionType;
+    private String operationType;
 
     @Column(name = "time")
     private Date time;
 
     @Column(name = "player")
-    private String player;
+    private String playingSide;
 
-    @Column(name = "card_rank")
-    private String cardRank;
+    @Column(name = "card_scores_value")
+    private int cardScoresValue;
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -60,12 +60,12 @@ public class Logging {
         this.operation = operation;
     }
 
-    public String getOperstionType() {
-        return operstionType;
+    public String getOperationType() {
+        return operationType;
     }
 
-    public void setOperstionType(String operstionType) {
-        this.operstionType = operstionType;
+    public void setOperationType(String operationType) {
+        this.operationType = operationType;
     }
 
     public Date getTime() {
@@ -76,20 +76,20 @@ public class Logging {
         this.time = time;
     }
 
-    public String getPlayer() {
-        return player;
+    public String getPlayingSide() {
+        return playingSide;
     }
 
-    public void setPlayer(String player) {
-        this.player = player;
+    public void setPlayingSide(String playingSide) {
+        this.playingSide = playingSide;
     }
 
-    public String getCardRank() {
-        return cardRank;
+    public int getCardScoresValue() {
+        return cardScoresValue;
     }
 
-    public void setCardRank(String cardRank) {
-        this.cardRank = cardRank;
+    public void setCardScoresValue(int cardScoresValue) {
+        this.cardScoresValue = cardScoresValue;
     }
 
     public Game getGame() {
