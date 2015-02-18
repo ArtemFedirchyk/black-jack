@@ -18,7 +18,7 @@
 
 		<!-- Dependencies -->
 		<commons-lang.version>3.3.2</commons-lang.version>
-		<guava.version>16.0.1</guava.version>
+		<joda-time.version>2.7</joda-time.version>
 	</properties>
 
 	<dependencies>
@@ -70,6 +70,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
 
 	</dependencies>
