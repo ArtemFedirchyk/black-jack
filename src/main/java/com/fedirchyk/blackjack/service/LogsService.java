@@ -51,6 +51,6 @@ public interface LogsService {
      *            - value of Game ID, which will be used for searching needed Logs
      * @return list of {@link Logging} objects? which contain logging information related to specified Game
      */
-    List<Logging> getAllLogs(int gameId);
+    List<Logging> getAllLogsForSpecifiedGame(int gameId);
 
 }

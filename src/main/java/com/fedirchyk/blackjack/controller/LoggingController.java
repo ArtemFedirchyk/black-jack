@@ -19,7 +19,7 @@ public class LoggingController {
     
     @RequestMapping(value="logs/{gameId}", method = RequestMethod.GET)
     public List<Logging> getNidedLogs(@PathVariable int gameId){
-        return logsService.getAllLogs(gameId); 
+        return logsService.getAllLogsForSpecifiedGame(gameId); 
     }
     
 }
