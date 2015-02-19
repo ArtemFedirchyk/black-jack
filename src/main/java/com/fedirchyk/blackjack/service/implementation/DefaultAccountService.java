@@ -10,7 +10,11 @@ import com.fedirchyk.blackjack.dao.WalletDao;
 import com.fedirchyk.blackjack.entity.Game;
 import com.fedirchyk.blackjack.entity.Wallet;
 import com.fedirchyk.blackjack.service.AccountService;
+import com.fedirchyk.blackjack.service.LogsService;
 import com.fedirchyk.blackjack.vo.GameTable;
+import com.fedirchyk.blackjack.vo.enumerations.AccountAction;
+import com.fedirchyk.blackjack.vo.enumerations.GameAction;
+import com.fedirchyk.blackjack.vo.enumerations.PlayingSide;
 
 /**
  * Contains implementation of logic associated with Player
@@ -26,6 +30,9 @@ public class DefaultAccountService implements AccountService {
     @Autowired
     private WalletDao walletDao;
 
+    @Autowired
+    private LogsService logsService;
+
     /**
      * {@inheritDoc}
      */
@@ -35,6 +42,10 @@ public class DefaultAccountService implements AccountService {
         Wallet savedWallet = saveNewWallet(balance);
         GameTable gameTable = new GameTable(savedWallet);
         DefaultGameService.cachedGameTables.put(new Integer(savedWallet.getWalletId()), gameTable);
+
+        logsService.writeAccountActionLog(gameTable, AccountAction.PLAYER_INITIALIZATION.getAccountAction());
+        logsService
+                .writeGameActionLog(gameTable, GameAction.START_GAME.getAction(), PlayingSide.PLAYER.getPlaingSide());
 
         return gameTable;
     }
@@ -53,6 +64,8 @@ public class DefaultAccountService implements AccountService {
         GameTable gameTable = DefaultGameService.cachedGameTables.get(new Integer(walletId));
         gameTable.setWallet(wallet);
 
+        logsService.writeAccountActionLog(gameTable, AccountAction.BALANCE_RECHARGE.getAccountAction());
+        
         return gameTable;
     }
 

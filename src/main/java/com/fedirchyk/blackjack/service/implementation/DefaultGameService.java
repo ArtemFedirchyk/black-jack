@@ -60,7 +60,8 @@ public class DefaultGameService implements GameService {
             GameTable gameTable = cachedGameTables.get(new Integer(walletId));
             if (gameTable.getGameStatus() != null) {
                 initNewGame(gameTable);
-                logsService.writeGameActionLog(gameTable, GameAction.START_GAME.getAction(), PlayingSide.PLAYER.getPlaingSide());
+                logsService.writeGameActionLog(gameTable, GameAction.START_GAME.getAction(),
+                        PlayingSide.PLAYER.getPlaingSide());
             }
 
             Wallet wallet = cachedGameTables.get(new Integer(walletId)).getWallet();
@@ -75,6 +76,8 @@ public class DefaultGameService implements GameService {
 
             logger.info("Actual Game ID - [" + gameTable.getWallet().getGame().getGameId()
                     + "] for Player' Wallet ID [" + gameTable.getWallet().getWalletId() + "]");
+
+            logsService.writeGameActionLog(gameTable, GameAction.BET.getAction(), PlayingSide.PLAYER.getPlaingSide());
 
             return gameTable;
         }
@@ -108,6 +111,9 @@ public class DefaultGameService implements GameService {
                 gameEngine.countPlayerScores(gameTable);
                 gameEngine.investigateGame(gameTable, GameAction.START_GAME.getAction());
 
+                logsService.writeGameActionLog(gameTable, GameAction.DEAL.getAction(),
+                        PlayingSide.PLAYER.getPlaingSide());
+
                 return gameTable;
             }
             throw new CardsAlreadyDealtException(ExceptionConstants.CARDS_ALREADY_DEALT);
@@ -129,9 +135,13 @@ public class DefaultGameService implements GameService {
                 gameTable.setGameAction(GameAction.HIT.getAction());
                 gameEngine.investigateGame(gameTable, GameAction.HIT.getAction());
 
+                // TODO: Check is this case for saving is useful
                 if (gameTable.getGameStatus().equals(GameStatus.LOOSE)) {
                     walletDao.save(gameTable.getWallet());
                 }
+
+                logsService.writeGameActionLog(gameTable, GameAction.HIT.getAction(),
+                        PlayingSide.PLAYER.getPlaingSide());
 
                 return gameTable;
             }
@@ -153,6 +163,10 @@ public class DefaultGameService implements GameService {
                     || gameTable.getGameAction().equals(GameAction.HIT.getAction())) {
 
                 gameTable.setGameAction(GameAction.STAND.getAction());
+
+                logsService.writeGameActionLog(gameTable, GameAction.STAND.getAction(),
+                        PlayingSide.PLAYER.getPlaingSide());
+
                 gameEngine.investigateGame(gameTable, gameTable.getGameAction());
                 walletDao.save(gameTable.getWallet());
 

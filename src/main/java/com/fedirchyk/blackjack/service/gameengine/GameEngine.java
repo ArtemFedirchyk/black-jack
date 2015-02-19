@@ -4,12 +4,15 @@ import java.util.Collections;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fedirchyk.blackjack.service.LogsService;
 import com.fedirchyk.blackjack.vo.Card;
 import com.fedirchyk.blackjack.vo.GameTable;
 import com.fedirchyk.blackjack.vo.enumerations.GameAction;
 import com.fedirchyk.blackjack.vo.enumerations.GameStatus;
+import com.fedirchyk.blackjack.vo.enumerations.PlayingSide;
 import com.fedirchyk.blackjack.vo.enumerations.Rank;
 import com.fedirchyk.blackjack.vo.enumerations.Suit;
 
@@ -31,6 +34,9 @@ public class GameEngine {
     private static final int MAX_HIT_CARDS_SCORES_COUNT = 10;
 
     private static final int INITIAL_STATE = 0;
+
+    @Autowired
+    private LogsService logsService;
 
     /**
      * Performs initialization of Deck of Cards for new game and hangs out all Cards inside Deck in random order
@@ -189,6 +195,8 @@ public class GameEngine {
 
         dealerGame(gameTable);
 
+        logsService.writeGameActionLog(gameTable, GameAction.STAND.getAction(), PlayingSide.DEALER.getPlaingSide());
+
         int dealerScores = gameTable.getDealerScores();
         int playerScores = gameTable.getPlayerScores();
 
@@ -206,6 +214,8 @@ public class GameEngine {
             gameTable.getWallet().setBalance(walletBalanceDrawCase);
             gameTable.setBet(INITIAL_STATE);
         }
+        logsService.writeGameActionLog(gameTable, GameAction.FINISH_GAME.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
     }
 
     /**
@@ -218,6 +228,8 @@ public class GameEngine {
     private void dealerGame(GameTable gameTable) {
         logger.info("Started Dealer game process");
 
+        logsService.writeGameActionLog(gameTable, GameAction.DEAL.getAction(), PlayingSide.DEALER.getPlaingSide());
+
         gameTable.getDealerCards().push(gameTable.getDealerHiddenCard());
         countDealerScores(gameTable);
         investigateDealerBlackJackCase(gameTable);
@@ -227,6 +239,9 @@ public class GameEngine {
         int dealerScores = 0;
 
         while (initialDealerScores < DEALER_MAX_INITIAL_SCORERS_COUNT && dealerScores != BLACK_JACK_COMBINATION) {
+
+            logsService.writeGameActionLog(gameTable, GameAction.HIT.getAction(), PlayingSide.DEALER.getPlaingSide());
+
             if (dealerScores > BLACK_JACK_COMBINATION) {
                 break;
             }
@@ -245,6 +260,7 @@ public class GameEngine {
      */
     private void investigatePlayerBlackJackCase(GameTable gameTable) {
         logger.info("Performing investigation of BlackJack Case");
+
         Stack<Card> dealerCards = gameTable.getDealerCards();
         dealerCards.push(gameTable.getDealerHiddenCard());
         countDealerScores(gameTable);
@@ -253,12 +269,18 @@ public class GameEngine {
             double walletBalance = gameTable.getWallet().getBalance() + gameTable.getBet();
             gameTable.getWallet().setBalance(walletBalance);
             gameTable.setBet(INITIAL_STATE);
+
+            logsService.writeGameActionLog(gameTable, GameAction.FINISH_GAME.getAction(),
+                    PlayingSide.PLAYER.getPlaingSide());
             return;
         }
         gameTable.setGameStatus(GameStatus.WIN.getStatus());
         double walletBalanceBJ = gameTable.getWallet().getBalance() + gameTable.getBet() + (gameTable.getBet() * 1.5);
         gameTable.getWallet().setBalance(walletBalanceBJ);
         gameTable.setBet(INITIAL_STATE);
+
+        logsService.writeGameActionLog(gameTable, GameAction.FINISH_GAME.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
     }
 
     /**
