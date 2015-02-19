@@ -23,6 +23,16 @@ public interface LoggingDao extends CrudRepository<Logging, Integer> {
      *            - value of Game ID, which will be used for finding needed log in DB
      * @return list of {@link Logging} type objects
      */
-    @Query(value = "SELECT * FROM logging WHERE game_id=:game_id", nativeQuery = true)
-    List<Logging> getLogsForSpecifiedGame(@Param("game_id") int gameId);
+    @Query(value = "SELECT * FROM LOGGING WHERE GAME_ID=:GAME_ID", nativeQuery = true)
+    List<Logging> getLogsForSpecifiedGame(@Param("GAME_ID") int gameId);
+
+    /**
+     * Finds in DB all logs, which is related to specified Player.
+     * 
+     * @param walletId
+     *            - value of Wallet's ID of specified Player, which will be used for finding needed log in DB
+     * @return list of {@link Logging} type objects
+     */
+    @Query(value = "SELECT * FROM LOGGING WHERE WALLET_ID=:WALLET_ID", nativeQuery = true)
+    List<Logging> getLogsForSpecifiedPlayer(@Param("WALLET_ID") int walletId);
 }

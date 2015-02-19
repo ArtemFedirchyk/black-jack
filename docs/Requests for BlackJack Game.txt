@@ -6,7 +6,7 @@ For initialization new Player in Game process you can use next requests:
 	2) localhost:8080/initPlayerBalance/500
 		As result you will create Player with custom wallet's balance, in this case ballance will be equal 500.	 
 
-For starting new Game you have 2 ways:
+For starting new Game You have 2 ways:
 	
 	1) You could make 2 steps (make Bet and make Deal actions)
 		1. localhost:8080/game/1/bet/100
@@ -20,4 +20,16 @@ Then You could make Hit or Stand action, for you choise:
 	1) localhost:8080/game/2/hit
 		After performing of this action You could make Hit action again or You could make Stand action if number of your game's scores count is enough for You. 
 	2) localhost:8080/game/2/stand
-		After performing of this action Game process will stop and you will see the result of this Game.			
+		After performing of this action Game process will stop and you will see the result of this Game.	
+		
+
+Also You could view all logs related for specified Game or Player:
+	1) localhost:8080/playerLogs/1
+		Using this request you could view all Logs, which are related to Player with ID - 1(for example in above request). 
+		This Logs contains all information about Game an Account actions, which were made by this Player. Also this logs contain information about all Games, which were played by this Player. 
+	2) localhost:8080/gameLogs/2
+		Using this request you could view all Logs, which are related only for specified Game, in case for above request this specified Game has ID - 2.	
+
+		
+For all above requests if You will use wrong input data, such us wrong IDs or wrong order of Game's actions You will see custom Exceptions with specified description of the problem.
+For example, right order of Game's actions is : Bet => Deal => Hit => Stand   or  Start(this step contains Bet and Deal actions together) => Hit => Stand 

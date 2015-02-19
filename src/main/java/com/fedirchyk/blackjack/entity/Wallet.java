@@ -1,6 +1,7 @@
 package com.fedirchyk.blackjack.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -39,6 +41,10 @@ public class Wallet {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "wallet")
     private Game game;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "wallet")
+    private List<Logging> loggingList;
 
     public int getWalletId() {
         return walletId;
@@ -78,6 +84,14 @@ public class Wallet {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public List<Logging> getLoggingList() {
+        return loggingList;
+    }
+
+    public void setLoggingList(List<Logging> loggingList) {
+        this.loggingList = loggingList;
     }
 
     @Override

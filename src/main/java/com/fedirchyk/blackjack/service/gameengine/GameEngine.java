@@ -228,10 +228,11 @@ public class GameEngine {
     private void dealerGame(GameTable gameTable) {
         logger.info("Started Dealer game process");
 
-        logsService.writeGameActionLog(gameTable, GameAction.DEAL.getAction(), PlayingSide.DEALER.getPlaingSide());
-
         gameTable.getDealerCards().push(gameTable.getDealerHiddenCard());
         countDealerScores(gameTable);
+
+        logsService.writeGameActionLog(gameTable, GameAction.DEAL.getAction(), PlayingSide.DEALER.getPlaingSide());
+
         investigateDealerBlackJackCase(gameTable);
 
         Stack<Card> dealerCards = gameTable.getDealerCards();

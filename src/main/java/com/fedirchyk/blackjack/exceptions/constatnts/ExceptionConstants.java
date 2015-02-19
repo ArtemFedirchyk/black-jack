@@ -16,6 +16,8 @@ public class ExceptionConstants {
 
     public static final String WALLET_BALANCE_NOT_ENOUGH = "The balance of Player's Wallet is not enough for making BET action with this Bet value";
 
+    public static final String GAME_NOT_FOUND = "The Game with such ID is not present, in other words it's not found in DB";
+
     public static final String CARDS_ALREADY_DEALT = "Cards already dealt and you couldn't take new deal before game's finish";
 
     public static final String HIT_ACTION_IS_NOT_POSSIBLE_WRONG_ACTION = "Hit action is possbile only after Deal or Hit actions, otherwise Hit action isn't possible";

@@ -22,13 +22,6 @@ public interface GameService {
     GameTable makeBet(int walletId, int bet);
 
     /**
-     * Checks is <b>Bet</b> made by Player
-     * 
-     * @return <b>true</b> if Bet is made and <b>false</b> if Bet isn't made
-     */
-    boolean isBetMade(int walletId);
-
-    /**
      * Performs main functional logic for <b>Deal</b> action, also this method starts general Game process
      * 
      * @param walletId
@@ -55,4 +48,20 @@ public interface GameService {
      * @return Object of {@link GameTable} type, which contains all information about Player's wallet and Game state
      */
     GameTable standAction(int walletId);
+
+    /**
+     * Checks is <b>Bet</b> made by Player
+     * 
+     * @return <b>true</b> if Bet is made and <b>false</b> if Bet isn't made
+     */
+    boolean isBetMade(int walletId);
+
+    /**
+     * Checks is <b>{@link Game}</b> is present in DB.
+     * 
+     * @param gameId
+     *            - value of Game ID, which will be used for searching specified Game in DB
+     * @return <b>true</b> if game is present and <b>false</b> if it isn't present in DB
+     */
+    boolean isGameExist(int gameId);
 }

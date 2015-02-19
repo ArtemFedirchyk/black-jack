@@ -49,8 +49,17 @@ public interface LogsService {
      * 
      * @param gameId
      *            - value of Game ID, which will be used for searching needed Logs
-     * @return list of {@link Logging} objects? which contain logging information related to specified Game
+     * @return list of {@link Logging} objects, which contain logging information related to specified Game
      */
     List<Logging> getAllLogsForSpecifiedGame(int gameId);
+
+    /**
+     * Gives all Logs from DB for some specified Player
+     * 
+     * @param walletId
+     *            - value of Wallet's ID of specified Player, which will be used for finding needed log in DB
+     * @return list of {@link Logging} objects, which contain logging information related to specified Player
+     */
+    List<Logging> getAllLogsForSpecifiedPlayer(int walletId);
 
 }

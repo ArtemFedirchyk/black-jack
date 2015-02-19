@@ -3,8 +3,10 @@ package com.fedirchyk.blackjack.service.implementation;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fedirchyk.blackjack.dao.LoggingDao;
 import com.fedirchyk.blackjack.entity.Logging;
@@ -23,6 +25,8 @@ import com.fedirchyk.blackjack.vo.enumerations.PlayingSide;
 @Service
 public class DefaultLogsService implements LogsService {
 
+    private static Logger logger = Logger.getLogger(DefaultLogsService.class);
+
     @Autowired
     private LoggingDao loggingDao;
 
@@ -30,13 +34,19 @@ public class DefaultLogsService implements LogsService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Logging writeGameActionLog(GameTable gameTable, String gameAction, String playingSide) {
         Logging logging = new Logging();
 
+        logger.info("Started process of writing Logs for Game action case");
+
         logging.setGame(gameTable.getWallet().getGame());
+        logging.setWallet(gameTable.getWallet());
+        logging.setGameStatus(gameTable.getGameStatus());
         logging.setOperationType(OperationType.GAME_OPERATION.getOperationType());
         logging.setPlayingSide(playingSide);
         logging.setTime(new Date());
+        writeLogDifferentPlayingSideCase(gameTable, playingSide, logging);
         if (gameAction.equals(GameAction.START_GAME.getAction())) {
             logging.setOperation(GameAction.START_GAME.getAction());
         }
@@ -45,10 +55,10 @@ public class DefaultLogsService implements LogsService {
         }
         if (gameAction.equals(GameAction.DEAL.getAction())) {
             logging.setOperation(GameAction.DEAL.getAction());
-            writeLogDealActionCase(gameTable, playingSide, logging);
         }
         if (gameAction.equals(GameAction.HIT.getAction())) {
             logging.setOperation(GameAction.HIT.getAction());
+            writeLogHitActionCase(gameTable, playingSide, logging);
         }
         if (gameAction.equals(GameAction.STAND.getAction())) {
             logging.setOperation(GameAction.STAND.getAction());
@@ -63,10 +73,14 @@ public class DefaultLogsService implements LogsService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public Logging writeAccountActionLog(GameTable gameTable, String accountAction) {
         Logging logging = new Logging();
 
+        logger.info("Started process of writing Logs for Account's action case");
+
         logging.setGame(gameTable.getWallet().getGame());
+        logging.setWallet(gameTable.getWallet());
         logging.setOperationType(OperationType.ACCOUNT_OPERATION.getOperationType());
         logging.setPlayingSide(PlayingSide.PLAYER.getPlaingSide());
         logging.setOperation(accountAction);
@@ -82,7 +96,23 @@ public class DefaultLogsService implements LogsService {
         return loggingDao.getLogsForSpecifiedGame(gameId);
     }
 
-    private void writeLogDealActionCase(GameTable gameTable, String playingSide, Logging logging) {
+    @Override
+    public List<Logging> getAllLogsForSpecifiedPlayer(int walletId) {
+        return loggingDao.getLogsForSpecifiedPlayer(walletId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    private void writeLogDifferentPlayingSideCase(GameTable gameTable, String playingSide, Logging logging) {
+        if (playingSide.equals(PlayingSide.PLAYER.getPlaingSide())) {
+            logging.setCommonScoresCount(gameTable.getPlayerScores());
+        } else if (playingSide.equals(PlayingSide.DEALER.getPlaingSide())) {
+            logging.setCommonScoresCount(gameTable.getDealerScores());
+        }
+    }
+
+    private void writeLogHitActionCase(GameTable gameTable, String playingSide, Logging logging) {
         if (playingSide.equals(PlayingSide.PLAYER.getPlaingSide())) {
             logging.setCardScoresValue(gameTable.getPlayerCards().peek().getRank().getCardValue());
         } else if (playingSide.equals(PlayingSide.DEALER.getPlaingSide())) {

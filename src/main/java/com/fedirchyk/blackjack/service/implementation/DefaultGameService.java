@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fedirchyk.blackjack.dao.GameDao;
 import com.fedirchyk.blackjack.dao.WalletDao;
 import com.fedirchyk.blackjack.entity.Game;
 import com.fedirchyk.blackjack.entity.Wallet;
@@ -41,6 +42,9 @@ public class DefaultGameService implements GameService {
 
     @Autowired
     private WalletDao walletDao;
+
+    @Autowired
+    private GameDao gameDao;
 
     @Autowired
     private GameEngine gameEngine;
@@ -83,15 +87,6 @@ public class DefaultGameService implements GameService {
         }
         throw new BetAlreadyMadeException(ExceptionConstants.BET_ALREADY_MADE);
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isBetMade(int walletId) {
-        logger.info("Started checking is Bet made by Player with Wallet's ID - [" + walletId + "]");
-        return (cachedGameTables.get(new Integer(walletId)).getBet() != INITIAL_BET_STATE);
     }
 
     /**
@@ -178,6 +173,23 @@ public class DefaultGameService implements GameService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isBetMade(int walletId) {
+        logger.info("Started checking is Bet made by Player with Wallet's ID - [" + walletId + "]");
+        return (cachedGameTables.get(new Integer(walletId)).getBet() != INITIAL_BET_STATE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isGameExist(int gameId) {
+        return gameDao.exists(gameId);
+    }
+
+    /**
      * Initializes new Game for current Player's Wallet, during process of Bet making. Performs only when previous Game
      * is finished.
      * 
@@ -194,5 +206,4 @@ public class DefaultGameService implements GameService {
         wallet.setGame(game);
         gameTable.setWallet(walletDao.save(wallet));
     }
-
 }

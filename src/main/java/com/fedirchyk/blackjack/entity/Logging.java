@@ -24,6 +24,9 @@ public class Logging {
     @Column(name = "log_id", nullable = false)
     private int logId;
 
+    @Column(name = "game_status")
+    private String gameStatus;
+
     @Column(name = "operation")
     private String operation;
 
@@ -36,13 +39,20 @@ public class Logging {
     @Column(name = "player")
     private String playingSide;
 
+    @Column(name = "common_scores_count")
+    private int commonScoresCount;
+
     @Column(name = "card_scores_value")
     private int cardScoresValue;
 
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id")
     private Game game;
+
+    @JsonIgnore
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "wallet_id")
+    private Wallet wallet;
 
     public int getLogId() {
         return logId;
@@ -50,6 +60,14 @@ public class Logging {
 
     public void setLogId(int logId) {
         this.logId = logId;
+    }
+
+    public String getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(String gameStatus) {
+        this.gameStatus = gameStatus;
     }
 
     public String getOperation() {
@@ -84,6 +102,14 @@ public class Logging {
         this.playingSide = playingSide;
     }
 
+    public int getCommonScoresCount() {
+        return commonScoresCount;
+    }
+
+    public void setCommonScoresCount(int commonScoresCount) {
+        this.commonScoresCount = commonScoresCount;
+    }
+
     public int getCardScoresValue() {
         return cardScoresValue;
     }
@@ -98,6 +124,14 @@ public class Logging {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public Wallet getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
     }
 
     @Override
@@ -120,5 +154,13 @@ public class Logging {
         if (logId != other.logId)
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Logging [logId=" + logId + ", gameStatus=" + gameStatus + ", operation=" + operation
+                + ", operationType=" + operationType + ", time=" + time + ", playingSide=" + playingSide
+                + ", commonScoresCount=" + commonScoresCount + ", cardScoresValue=" + cardScoresValue + ", gameID="
+                + game.getGameId() + "]";
     }
 }
