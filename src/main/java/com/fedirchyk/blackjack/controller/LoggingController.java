@@ -19,6 +19,12 @@ import com.fedirchyk.blackjack.service.GameService;
 import com.fedirchyk.blackjack.service.LogsService;
 import com.fedirchyk.blackjack.vo.Logs;
 
+/**
+ * This controller is responsible for processing all requests which are associated with Logging process
+ * 
+ * @author artem.fedirchyk
+ * 
+ */
 @RestController("/")
 public class LoggingController {
 

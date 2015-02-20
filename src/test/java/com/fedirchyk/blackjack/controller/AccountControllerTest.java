@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -108,23 +107,6 @@ public class AccountControllerTest {
         ResultActions results = mockMvcAccountController.perform(increaseBalanceResult);
 
         results.andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Ignore
-    @Test
-    public void testIncreaseBalanseReturnCorrectResult() throws Exception {
-        String correctWalletID = "1";
-        String moneyForIncreasingOfBalance = "300";
-
-        MockHttpServletRequestBuilder initializatedPlayerResult = get("/initPlayer").accept(MediaType.ALL);
-        mockMvcAccountController.perform(initializatedPlayerResult);
-
-        MockHttpServletRequestBuilder increaseBalanceResult = get(
-                "/addMoney/" + correctWalletID + "/" + moneyForIncreasingOfBalance).accept(MediaType.ALL);
-        ResultActions results = mockMvcAccountController.perform(increaseBalanceResult);
-
-        results.andExpect(jsonPath("$.wallet.balance").value(
-                Double.parseDouble(moneyForIncreasingOfBalance) + DEFAULT_BALANCE));
     }
 
     @Test

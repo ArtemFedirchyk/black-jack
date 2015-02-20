@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.fedirchyk.blackjack.entity.Logging;
 
 /**
- * Provides access to Logging entity (contains logic for CRUD operations for storing information in DB)
+ * Provides access to Logging entity (contains logic for CRUD operations for storing and reading information in/from DB)
  * 
  * @author artem.fedirchyk
  * 

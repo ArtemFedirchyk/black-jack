@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.fedirchyk.blackjack.entity.Wallet;
 
 /**
- * Provides access to Wallet entity (contains logic for CRUD operations for storing information in DB)
+ * Provides access to Wallet entity (contains logic for CRUD operations for storing and reading information in/from DB)
  * 
  * @author artem.fedirchyk
  * 

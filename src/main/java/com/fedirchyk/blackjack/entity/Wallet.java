@@ -27,15 +27,11 @@ public class Wallet {
     @Column(name = "wallet_id", nullable = false)
     private int walletId;
 
-    @Column(name = "balance", nullable = true)
+    @Column(name = "balance")
     private double balance;
 
     @JsonIgnore
-    @Column(name = "operation", nullable = true)
-    private String operation;
-
-    @JsonIgnore
-    @Column(name = "time", nullable = true)
+    @Column(name = "time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
@@ -60,14 +56,6 @@ public class Wallet {
 
     public void setBalance(double balance) {
         this.balance = balance;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
     }
 
     public Date getTime() {

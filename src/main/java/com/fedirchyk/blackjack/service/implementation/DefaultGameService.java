@@ -60,30 +60,33 @@ public class DefaultGameService implements GameService {
         logger.info("Started process of making Bet - [" + bet + "] for Wallet ID - [" + walletId + "]");
 
         if (!isBetMade(walletId)) {
+            if (bet > 0) {
+                GameTable gameTable = cachedGameTables.get(new Integer(walletId));
+                if (gameTable.getGameStatus() != null) {
+                    initNewGame(gameTable);
+                    logsService.writeGameActionLog(gameTable, GameAction.START_GAME.getAction(),
+                            PlayingSide.PLAYER.getPlaingSide());
+                }
 
-            GameTable gameTable = cachedGameTables.get(new Integer(walletId));
-            if (gameTable.getGameStatus() != null) {
-                initNewGame(gameTable);
-                logsService.writeGameActionLog(gameTable, GameAction.START_GAME.getAction(),
+                Wallet wallet = cachedGameTables.get(new Integer(walletId)).getWallet();
+
+                wallet.setBalance(wallet.getBalance() - bet);
+                walletDao.save(wallet);
+
+                gameTable.setWallet(wallet);
+                gameTable.setBet(bet);
+                gameTable.setGameStatus(GameStatus.PENDING.getStatus());
+                gameTable.setGameAction(GameAction.BET.getAction());
+
+                logger.info("Actual Game ID - [" + gameTable.getWallet().getGame().getGameId()
+                        + "] for Player' Wallet ID [" + gameTable.getWallet().getWalletId() + "]");
+
+                logsService.writeGameActionLog(gameTable, GameAction.BET.getAction(),
                         PlayingSide.PLAYER.getPlaingSide());
+
+                return gameTable;
             }
-
-            Wallet wallet = cachedGameTables.get(new Integer(walletId)).getWallet();
-
-            wallet.setBalance(wallet.getBalance() - bet);
-            walletDao.save(wallet);
-
-            gameTable.setWallet(wallet);
-            gameTable.setBet(bet);
-            gameTable.setGameStatus(GameStatus.PENDING.getStatus());
-            gameTable.setGameAction(GameAction.BET.getAction());
-
-            logger.info("Actual Game ID - [" + gameTable.getWallet().getGame().getGameId()
-                    + "] for Player' Wallet ID [" + gameTable.getWallet().getWalletId() + "]");
-
-            logsService.writeGameActionLog(gameTable, GameAction.BET.getAction(), PlayingSide.PLAYER.getPlaingSide());
-
-            return gameTable;
+            throw new BetNotMadeException(ExceptionConstants.BET_COULD_NOT_BE_NULL);
         }
         throw new BetAlreadyMadeException(ExceptionConstants.BET_ALREADY_MADE);
 

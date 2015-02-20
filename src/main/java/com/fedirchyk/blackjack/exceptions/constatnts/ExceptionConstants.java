@@ -10,6 +10,8 @@ public class ExceptionConstants {
 
     public static final String BET_NOT_MADE = "First need to make Bet before DEAL action";
 
+    public static final String BET_COULD_NOT_BE_NULL = "Bet could not be equal '0', please make Bet more then '0' coins";
+
     public static final String BET_ALREADY_MADE = "Bet already made for this Game, another Bet is not allowed";
 
     public static final String WALLET_NOT_FOUND = "Wallet with such ID not found in DataBase";

@@ -6,7 +6,7 @@ import com.fedirchyk.blackjack.entity.Game;
 
 
 /**
- * Provides access to Game entity (contains logic for CRUD operations for storing information in DB)
+ * Provides access to Game entity (contains logic for CRUD operations for storing and reading information in/from DB)
  * 
  * @author artem.fedirchyk
  * 

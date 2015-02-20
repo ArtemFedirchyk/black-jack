@@ -34,7 +34,7 @@ public class Logging {
     @Column(name = "time")
     private String time;
 
-    @Column(name = "player")
+    @Column(name = "playing_side")
     private String playingSide;
 
     @Column(name = "common_scores_count")

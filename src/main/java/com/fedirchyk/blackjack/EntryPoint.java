@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * This Class is Entry - Point for all application, it runs Spring Boot engine and contains setup configuration
  * 
- * @author dell
+ * @author artem.fedirchyk
  * 
  */
 @Configuration
