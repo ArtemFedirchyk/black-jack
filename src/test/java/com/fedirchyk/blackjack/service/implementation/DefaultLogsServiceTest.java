@@ -1,8 +1,9 @@
 package com.fedirchyk.blackjack.service.implementation;
 
+import java.util.Stack;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fedirchyk.blackjack.entity.Logging;
 import com.fedirchyk.blackjack.service.AccountService;
 import com.fedirchyk.blackjack.service.LogsService;
+import com.fedirchyk.blackjack.vo.Card;
 import com.fedirchyk.blackjack.vo.GameTable;
 import com.fedirchyk.blackjack.vo.enumerations.AccountAction;
 import com.fedirchyk.blackjack.vo.enumerations.GameAction;
 import com.fedirchyk.blackjack.vo.enumerations.OperationType;
 import com.fedirchyk.blackjack.vo.enumerations.PlayingSide;
+import com.fedirchyk.blackjack.vo.enumerations.Rank;
+import com.fedirchyk.blackjack.vo.enumerations.Suit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:test-application-context.xml")
@@ -88,27 +92,30 @@ public class DefaultLogsServiceTest {
         Assert.assertEquals(savedLogDealAction.getOperation(), GameAction.DEAL.getAction());
     }
 
-    @Ignore
     @Test
     public void testWriteAccountGameActionLogHitActionPlayerCase() {
-        // TODO: Make Decks of Crads for Player and Dealer
+        initPlayerCards(gameTable);
         Logging savedLogHitActionPlayer = logsService.writeGameActionLog(gameTable, GameAction.HIT.getAction(),
                 PlayingSide.PLAYER.getPlaingSide());
 
         Assert.assertEquals(savedLogHitActionPlayer.getOperation(), GameAction.HIT.getAction());
         Assert.assertEquals(savedLogHitActionPlayer.getPlayingSide(), PlayingSide.PLAYER.getPlaingSide());
+        Assert.assertEquals(savedLogHitActionPlayer.getCardScoresValue(), Rank.JACK.getCardValue());
+        Assert.assertNotEquals(savedLogHitActionPlayer.getCardScoresValue(), Rank.ACE.getCardValue());
     }
 
-    @Ignore
     @Test
     public void testWriteAccountGameActionLogHitActionDealerCase() {
-        // TODO: Make Decks of Crads for Player and Dealer
+        initDealerCards(gameTable);
         Logging savedLogHitActionDealer = logsService.writeGameActionLog(gameTable, GameAction.HIT.getAction(),
                 PlayingSide.DEALER.getPlaingSide());
 
         Assert.assertEquals(savedLogHitActionDealer.getOperation(), GameAction.HIT.getAction());
+        Assert.assertEquals(savedLogHitActionDealer.getPlayingSide(), PlayingSide.DEALER.getPlaingSide());
+        Assert.assertEquals(savedLogHitActionDealer.getCardScoresValue(), Rank.FIVE.getCardValue());
+        Assert.assertNotEquals(savedLogHitActionDealer.getCardScoresValue(), Rank.EIGHT.getCardValue());
     }
-    
+
     @Test
     public void testWriteAccountGameActionLogStandActionCase() {
         Logging savedLogStandAction = logsService.writeGameActionLog(gameTable, GameAction.STAND.getAction(),
@@ -123,5 +130,17 @@ public class DefaultLogsServiceTest {
                 PlayingSide.PLAYER.getPlaingSide());
 
         Assert.assertEquals(savedLogStandAction.getOperation(), GameAction.FINISH_GAME.getAction());
+    }
+
+    private void initPlayerCards(GameTable gameTable) {
+        Stack<Card> playerCards = gameTable.getPlayerCards();
+        playerCards.push(new Card(Rank.ACE, Suit.CLUBS));
+        playerCards.push(new Card(Rank.JACK, Suit.DIAMONDS));
+    }
+
+    private void initDealerCards(GameTable gameTable) {
+        Stack<Card> dealerCards = gameTable.getDealerCards();
+        dealerCards.push(new Card(Rank.EIGHT, Suit.HEARTS));
+        dealerCards.push(new Card(Rank.FIVE, Suit.SPADES));
     }
 }

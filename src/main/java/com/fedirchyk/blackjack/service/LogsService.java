@@ -1,9 +1,8 @@
 package com.fedirchyk.blackjack.service;
 
-import java.util.List;
-
 import com.fedirchyk.blackjack.entity.Logging;
 import com.fedirchyk.blackjack.vo.GameTable;
+import com.fedirchyk.blackjack.vo.Logs;
 
 /**
  * Contains all functional logic associated with Logs writing process
@@ -49,17 +48,17 @@ public interface LogsService {
      * 
      * @param gameId
      *            - value of Game ID, which will be used for searching needed Logs
-     * @return list of {@link Logging} objects, which contain logging information related to specified Game
+     * @return Object of {@link Logs} type, which contain logging information related to specified Game
      */
-    List<Logging> getAllLogsForSpecifiedGame(int gameId);
+    Logs getAllLogsForSpecifiedGame(int gameId);
 
     /**
      * Gives all Logs from DB for some specified Player
      * 
      * @param walletId
      *            - value of Wallet's ID of specified Player, which will be used for finding needed log in DB
-     * @return list of {@link Logging} objects, which contain logging information related to specified Player
+     * @return Object of {@link Logs} type, which contain logging information related to specified Player
      */
-    List<Logging> getAllLogsForSpecifiedPlayer(int walletId);
+    Logs getAllLogsForSpecifiedPlayer(int walletId);
 
 }

@@ -1,7 +1,5 @@
 package com.fedirchyk.blackjack.entity;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +32,7 @@ public class Logging {
     private String operationType;
 
     @Column(name = "time")
-    private Date time;
+    private String time;
 
     @Column(name = "player")
     private String playingSide;
@@ -86,11 +84,11 @@ public class Logging {
         this.operationType = operationType;
     }
 
-    public Date getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

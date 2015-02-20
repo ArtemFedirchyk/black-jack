@@ -1,7 +1,6 @@
 package com.fedirchyk.blackjack.service.implementation;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,9 @@ import com.fedirchyk.blackjack.dao.LoggingDao;
 import com.fedirchyk.blackjack.entity.Logging;
 import com.fedirchyk.blackjack.service.LogsService;
 import com.fedirchyk.blackjack.vo.GameTable;
+import com.fedirchyk.blackjack.vo.Logs;
 import com.fedirchyk.blackjack.vo.enumerations.GameAction;
+import com.fedirchyk.blackjack.vo.enumerations.LogsType;
 import com.fedirchyk.blackjack.vo.enumerations.OperationType;
 import com.fedirchyk.blackjack.vo.enumerations.PlayingSide;
 
@@ -45,7 +46,7 @@ public class DefaultLogsService implements LogsService {
         logging.setGameStatus(gameTable.getGameStatus());
         logging.setOperationType(OperationType.GAME_OPERATION.getOperationType());
         logging.setPlayingSide(playingSide);
-        logging.setTime(new Date());
+        logging.setTime(new Date().toString());
         writeLogDifferentPlayingSideCase(gameTable, playingSide, logging);
         if (gameAction.equals(GameAction.START_GAME.getAction())) {
             logging.setOperation(GameAction.START_GAME.getAction());
@@ -84,7 +85,7 @@ public class DefaultLogsService implements LogsService {
         logging.setOperationType(OperationType.ACCOUNT_OPERATION.getOperationType());
         logging.setPlayingSide(PlayingSide.PLAYER.getPlaingSide());
         logging.setOperation(accountAction);
-        logging.setTime(new Date());
+        logging.setTime(new Date().toString());
         return loggingDao.save(logging);
     }
 
@@ -92,13 +93,19 @@ public class DefaultLogsService implements LogsService {
      * {@inheritDoc}
      */
     @Override
-    public List<Logging> getAllLogsForSpecifiedGame(int gameId) {
-        return loggingDao.getLogsForSpecifiedGame(gameId);
+    public Logs getAllLogsForSpecifiedGame(int gameId) {
+        Logs logs = new Logs();
+        logs.setLogType(LogsType.LOGS_OF_GAME_TYPE.getLogType());
+        logs.setLogs(loggingDao.getLogsForSpecifiedGame(gameId));
+        return logs;
     }
 
     @Override
-    public List<Logging> getAllLogsForSpecifiedPlayer(int walletId) {
-        return loggingDao.getLogsForSpecifiedPlayer(walletId);
+    public Logs getAllLogsForSpecifiedPlayer(int walletId) {
+        Logs logs = new Logs();
+        logs.setLogType(LogsType.LOGS_OFACCOUNT_TYPE.getLogType());
+        logs.setLogs(loggingDao.getLogsForSpecifiedPlayer(walletId));
+        return logs;
     }
 
     /**
