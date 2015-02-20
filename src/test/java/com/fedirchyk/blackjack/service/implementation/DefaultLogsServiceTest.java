@@ -2,6 +2,7 @@ package com.fedirchyk.blackjack.service.implementation;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +71,57 @@ public class DefaultLogsServiceTest {
         Assert.assertEquals(savedLogStartGamePlayer.getPlayingSide(), PlayingSide.PLAYER.getPlaingSide());
         Assert.assertEquals(savedLogStartGamePlayer.getOperation(), GameAction.START_GAME.getAction());
     }
+
+    @Test
+    public void testWriteAccountGameActionLogBetActionCase() {
+        Logging savedLogBetAction = logsService.writeGameActionLog(gameTable, GameAction.BET.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
+
+        Assert.assertEquals(savedLogBetAction.getOperation(), GameAction.BET.getAction());
+    }
+
+    @Test
+    public void testWriteAccountGameActionLogDealActionCase() {
+        Logging savedLogDealAction = logsService.writeGameActionLog(gameTable, GameAction.DEAL.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
+
+        Assert.assertEquals(savedLogDealAction.getOperation(), GameAction.DEAL.getAction());
+    }
+
+    @Ignore
+    @Test
+    public void testWriteAccountGameActionLogHitActionPlayerCase() {
+        // TODO: Make Decks of Crads for Player and Dealer
+        Logging savedLogHitActionPlayer = logsService.writeGameActionLog(gameTable, GameAction.HIT.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
+
+        Assert.assertEquals(savedLogHitActionPlayer.getOperation(), GameAction.HIT.getAction());
+        Assert.assertEquals(savedLogHitActionPlayer.getPlayingSide(), PlayingSide.PLAYER.getPlaingSide());
+    }
+
+    @Ignore
+    @Test
+    public void testWriteAccountGameActionLogHitActionDealerCase() {
+        // TODO: Make Decks of Crads for Player and Dealer
+        Logging savedLogHitActionDealer = logsService.writeGameActionLog(gameTable, GameAction.HIT.getAction(),
+                PlayingSide.DEALER.getPlaingSide());
+
+        Assert.assertEquals(savedLogHitActionDealer.getOperation(), GameAction.HIT.getAction());
+    }
     
     @Test
-    public void testWriteAccountGameActionLogBetActionCase(){
-        
+    public void testWriteAccountGameActionLogStandActionCase() {
+        Logging savedLogStandAction = logsService.writeGameActionLog(gameTable, GameAction.STAND.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
+
+        Assert.assertEquals(savedLogStandAction.getOperation(), GameAction.STAND.getAction());
+    }
+
+    @Test
+    public void testWriteAccountGameActionLogFinishGameCase() {
+        Logging savedLogStandAction = logsService.writeGameActionLog(gameTable, GameAction.FINISH_GAME.getAction(),
+                PlayingSide.PLAYER.getPlaingSide());
+
+        Assert.assertEquals(savedLogStandAction.getOperation(), GameAction.FINISH_GAME.getAction());
     }
 }
